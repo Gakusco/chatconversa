@@ -17,17 +17,19 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
+
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:src="@drawable/ic_chat_conversa_foreground"></ImageView>
+            android:src="@drawable/ic_chat_conversa_foreground" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:textSize="20dp"
-            android:text="ChatConversa"
-            android:paddingBottom="50dp"></TextView>
+            android:textSize="20sp"
+            android:text="@string/chatconversa"
+            android:paddingBottom="50dp" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +41,8 @@
             android:id="@+id/inicioLogin"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
+            android:hint="@string/username"
+            app:startIconDrawable="@drawable/ic_person_black_24dp"
             android:layout_margin="20dp">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -53,10 +56,10 @@
             android:id="@+id/inicioPass"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Contraseña"
+            android:hint="@string/contrase_a"
             android:layout_margin="20dp"
-            app:endIconMode="password_toggle">>
-
+            app:startIconDrawable="@drawable/ic_lock_outline_black_24dp"
+            app:endIconMode="password_toggle">
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -64,17 +67,21 @@
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
+
         <Button
             android:id="@+id/btnIniciarSesion"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Iniciar sesión"
-            android:layout_margin="20dp"></Button>
+            android:text="@string/iniciar_sesion"
+            android:layout_margin="20dp" />
+
         <Button
             android:id="@+id/btnIrAlRegistro"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="Registrarse"></Button>
+            style="?attr/materialButtonOutlinedStyle"
+            android:textColor="#ffffff"
+            android:text="@string/registrarse" />
     </LinearLayout>
 
 </LinearLayout>
