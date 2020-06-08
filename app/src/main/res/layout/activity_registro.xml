@@ -12,9 +12,13 @@
         android:orientation="vertical"
         android:padding="20dp">
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutNombre"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/nombre"
+            app:counterEnabled="true"
+            app:counterMaxLength="60"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -26,9 +30,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutApellidos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/apellidos"
+            app:counterEnabled="true"
+            app:counterMaxLength="60"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -40,9 +48,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutRun"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/run"
+            app:counterEnabled="true"
+            app:counterMaxLength="8"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -54,9 +66,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutUsername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/username"
+            app:counterEnabled="true"
+            app:counterMaxLength="8"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -68,9 +84,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/email"
+            app:counterEnabled="true"
+            app:counterMaxLength="50"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -82,9 +102,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/contrase_a"
+            app:counterEnabled="true"
+            app:counterMaxLength="12"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -96,9 +120,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutConfirmPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Repetir contraseña"
+            android:hint="@string/repetir_contrase_a"
+            app:counterEnabled="true"
+            app:counterMaxLength="12"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -110,9 +138,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
         <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutTokenEmpresa"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Token de empresa"
+            android:hint="@string/token_de_empresa"
+            app:counterEnabled="true"
+            app:counterMaxLength="6"
+            app:errorEnabled="true"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText

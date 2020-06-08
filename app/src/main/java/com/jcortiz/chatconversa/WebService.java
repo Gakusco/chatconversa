@@ -18,4 +18,13 @@ public interface WebService {
             @Field("password") String password,
             @Field("token_enterprise") String tokenEnterprise
     );
+
+    @FormUrlEncoded
+    @POST("login")
+    Call<RespuestaLoginWS> login(
+            @Field("username") String nombre,
+            @Field("password") String password,
+            @Field("device_id") String deviceId
+    );
+
 }
