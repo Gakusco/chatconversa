@@ -11,6 +11,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
+        <TextView
+            android:id="@+id/mensajeDeErrorRegistro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/design_default_color_error"
+            android:visibility="gone"></TextView>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutNombre"
             android:layout_width="match_parent"

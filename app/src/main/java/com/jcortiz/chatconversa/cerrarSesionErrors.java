@@ -8,12 +8,8 @@ import java.util.Objects;
 
 class cerrarSesionErrors {
 
-    @SerializedName("username")
-    @Expose
     private List<String> username;
 
-    @SerializedName("user_id")
-    @Expose
     private List<String> userId;
 
     public cerrarSesionErrors(List<String> username, List<String> userId) {

@@ -6,12 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 public class errorCerrarSesion {
-    @SerializedName("status_code")
-    @Expose
     private int codeStatus;
 
-    @SerializedName("message")
-    @Expose
     private String message;
 
     @SerializedName("errors")

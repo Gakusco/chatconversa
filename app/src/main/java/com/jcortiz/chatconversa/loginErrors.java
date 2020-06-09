@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class loginErrors {
-    @SerializedName("username")
-    @Expose
+
     private List<String> username;
 
-    @SerializedName("password")
-    @Expose
     private List<String> password;
 
     public loginErrors(List<String> username, List<String> password) {
