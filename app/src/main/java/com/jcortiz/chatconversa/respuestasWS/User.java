@@ -1,15 +1,34 @@
 package com.jcortiz.chatconversa.respuestasWS;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
 public class User {
+    @SerializedName("id")
+    @Expose
     private Integer id;
+    @SerializedName("name")
+    @Expose
     private String name;
+    @SerializedName("lastname")
+    @Expose
     private String lastName;
+    @SerializedName("username")
+    @Expose
     private String username;
+    @SerializedName("run")
+    @Expose
     private String run;
+    @SerializedName("email")
+    @Expose
     private String email;
+    @SerializedName("image")
+    @Expose
     private String image;
+    @SerializedName("thumbnail")
+    @Expose
     private String thumbnail;
 
     public User(Integer id, String name, String lastName, String username, String run, String email, String image, String thumbnail) {

@@ -2,6 +2,7 @@ package com.jcortiz.chatconversa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -305,8 +306,10 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onResponse(Call<RespuestaRegistroWS> call, Response<RespuestaRegistroWS> response) {
                 if(response != null && response.body() != null){
-                    Toast.makeText(Registro.this,"Registro exitoso",Toast.LENGTH_LONG).show();
+                    Intent i = new Intent(Registro.this,splashRegistroExitoso.class);
+                    startActivity(i);
                     textoError.setVisibility(View.GONE);
+                    finish();
                 }else if(!response.isSuccessful()) {
                     Gson gson = new Gson();
                     mensajeErrorRegistro mensajeDeError = gson.fromJson(response.errorBody().charStream(),mensajeErrorRegistro.class);
@@ -327,7 +330,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
 
                         if(mensajeDeError.getErrors().getRun() != null){
                             String runError = mensajeDeError.getErrors().getRun().toString();
-                            layoutLastName.setError(runError.substring(1,runError.length()-1));
+                            layoutRun.setError(runError.substring(1,runError.length()-1));
                         }
 
                         if(mensajeDeError.getErrors().getUsername() != null){
@@ -350,56 +353,6 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                             layoutTokenEmprise.setError(tokenError.substring(1,tokenError.length()-1));
                         }
                     }
-                    /*try {
-                        JSONObject json = new JSONObject(response.errorBody().string());
-                        String message = json.getString("message");
-                        JSONObject obtenerErrores = json.getJSONObject("errors");
-                        String tokenError = "";
-                        String correoError = "";
-                        String usernameError = "";
-                        String nombreError = "";
-                        String apellidoError = "";
-                        String passwordError = "";
-                        String runError = "";
-                        String obtenerString = "";
-                        if (obtenerErrores.has("name")) {
-                            obtenerString = obtenerErrores.getString("name");
-                            nombreError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutName.setError(nombreError);
-                        }
-                        if (obtenerErrores.has("run")) {
-                            obtenerString = obtenerErrores.getString("run");
-                            runError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutRun.setError(runError);
-                        }
-                        if (obtenerErrores.has("lastname")) {
-                            obtenerString = obtenerErrores.getString("lastname");
-                            apellidoError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutLastName.setError(apellidoError);
-                        }
-                        if (obtenerErrores.has("password")) {
-                            obtenerString = obtenerErrores.getString("password");
-                            passwordError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutPassword.setError(passwordError);
-                        }
-                        if (obtenerErrores.has("token_enterprise")) {
-                            obtenerString = obtenerErrores.getString("token_enterprise");
-                            tokenError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutTokenEmprise.setError(tokenError);
-                        }
-                        if (obtenerErrores.has("username")) {
-                            obtenerString = obtenerErrores.getString("username");
-                            usernameError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutUsername.setError(usernameError);
-                        }
-                        if (obtenerErrores.has("email")) {
-                            obtenerString = obtenerErrores.getString("email");
-                            correoError = obtenerString.substring(2, obtenerString.length() - 3);
-                            layoutEmail.setError(correoError);
-                        }
-                    } catch (IOException | JSONException e) {
-                        e.printStackTrace();
-                    }*/
 
                 }
             }

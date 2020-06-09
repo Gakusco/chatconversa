@@ -156,8 +156,14 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                             edit.putString("password",inputContraLogin.getText().toString());
                             edit.putString("userId",response.body().getUser().getId().toString());
                             edit.putString("token",response.body().getToken());
+                            edit.putString("name",response.body().getUser().getName());
+                            edit.putString("lastName",response.body().getUser().getLastName());
+                            edit.putString("run",response.body().getUser().getRun());
+                            edit.putString("email",response.body().getUser().getEmail());
+                            edit.putString("image",response.body().getUser().getImage());
+                            edit.putString("thumbnail",response.body().getUser().getThumbnail());
                             edit.commit();
-                            Intent i = new Intent(Principal.this,sesionIniciada.class);
+                            Intent i = new Intent(Principal.this,splashLogin.class);
                             startActivity(i);
                             finish();
 

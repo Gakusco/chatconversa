@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/design_default_color_error"
-            android:visibility="gone"></TextView>
+            android:visibility="gone"
+            android:layout_marginBottom="20dp"></TextView>
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutNombre"
             android:layout_width="match_parent"
@@ -25,6 +26,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="60"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -43,6 +45,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="60"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -61,6 +64,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="8"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -79,6 +83,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="8"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -97,6 +102,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="50"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -115,6 +121,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="12"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -133,6 +140,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="12"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -151,6 +159,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="6"
             app:errorEnabled="true"
+            android:layout_marginBottom="20dp"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText

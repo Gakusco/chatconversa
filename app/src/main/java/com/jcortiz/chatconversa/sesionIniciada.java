@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -27,16 +28,45 @@ public class sesionIniciada extends AppCompatActivity {
     private static WebService servicio;
     private SharedPreferences preferencias;
 
+    private String token;
+    private String idUser;
+    private String name;
+    private String lastName;
+    private String username;
+    private String run;
+    private String email;
+    private String image;
+    private String thumbnail;
+
+    private TextView textoNombre;
+    private TextView textoApellido;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sesion_iniciada);
         inyecionDependenciaRetrofit();
         inflarComponentes();
+        barraDeAccion();
+
+        textoNombre.setText(name);
+        textoApellido.setText(lastName);
     }
 
     private void inflarComponentes() {
         preferencias = getSharedPreferences(Principal.PREF_KEY,MODE_PRIVATE);
+        token = "Bearer "+preferencias.getString("token","errorToken");
+        idUser = preferencias.getString("userId","errorId");
+        name = preferencias.getString("name","errorName");
+        lastName = preferencias.getString("lastName","errorLastname");
+        username = preferencias.getString("user","errorUser");
+        run = preferencias.getString("run","errorRun");
+        email = preferencias.getString("email","errorEmail");
+        image = preferencias.getString("image","errorImage");
+        thumbnail = preferencias.getString("thumbnail","errorThumbnail");
+
+        textoNombre = findViewById(R.id.nombreUsuario);
+        textoApellido = findViewById(R.id.apellidoUsuario);
     }
 
     @Override
@@ -46,13 +76,15 @@ public class sesionIniciada extends AppCompatActivity {
         return true;
     }
 
+    private void barraDeAccion() {
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setIcon(R.mipmap.ic_chat_conversa);
+    }
+
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.cerrarSesionID:
-                String token = "Bearer "+preferencias.getString("token","errorToken");
-                String username = preferencias.getString("user","errorUser");
-                String idUser = preferencias.getString("userId","errorId");
                 Log.d("Retrofit",token+" "+username+" "+idUser);
                 final Call<RespuestaCerrarSesionWS> resp = servicio.logout(token,idUser,username);
 
@@ -62,8 +94,7 @@ public class sesionIniciada extends AppCompatActivity {
                         if(response != null && response.body() != null){
                             SharedPreferences pref = getSharedPreferences(Principal.PREF_KEY,0);
                             pref.edit().clear().commit();
-                            Intent i = new Intent(sesionIniciada.this,Principal.class);
-                            Toast.makeText(sesionIniciada.this,response.body().getMessage(),Toast.LENGTH_LONG).show();
+                            Intent i = new Intent(sesionIniciada.this,splashLogout.class);
                             startActivity(i);
                             finish();
                         }else{
