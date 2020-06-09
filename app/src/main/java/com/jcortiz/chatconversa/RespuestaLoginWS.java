@@ -1,11 +1,16 @@
 package com.jcortiz.chatconversa;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
 public class RespuestaLoginWS {
     private int code;
     private String message;
     private String token;
+    @SerializedName("data")
+    @Expose
     private User user;
 
     public int getCode() {

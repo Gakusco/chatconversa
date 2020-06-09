@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="#ffffff"
-            android:textSize="20sp"
+            android:textSize="20dp"
             android:text="@string/chatconversa"
             android:paddingBottom="50dp" />
     </LinearLayout>
@@ -36,6 +36,17 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:gravity="center">
+
+        <TextView
+            android:id="@+id/mostrarMessageErrorLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/cardview_light_background"
+            android:textColor="@android:color/holo_red_light"
+            android:text="Error"
+            android:visibility="gone"
+            ></TextView>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutUserLogin"

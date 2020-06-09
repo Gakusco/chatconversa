@@ -1,10 +1,12 @@
 package com.jcortiz.chatconversa;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.Objects;
 
 public class User {
-
-    private int id;
+    private Integer id;
     private String name;
     private String lastName;
     private String username;
@@ -13,11 +15,22 @@ public class User {
     private String image;
     private String thumbnail;
 
-    public int getId() {
+    public User(Integer id, String name, String lastName, String username, String run, String email, String image, String thumbnail) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.username = username;
+        this.run = run;
+        this.email = email;
+        this.image = image;
+        this.thumbnail = thumbnail;
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -82,7 +95,7 @@ public class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return id == user.id &&
+        return Objects.equals(id, user.id) &&
                 Objects.equals(name, user.name) &&
                 Objects.equals(lastName, user.lastName) &&
                 Objects.equals(username, user.username) &&

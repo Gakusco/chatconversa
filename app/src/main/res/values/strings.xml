@@ -12,4 +12,5 @@
     <string name="run">RUN</string>
     <string name="repetir_contrase_a">Repetir contraseña</string>
     <string name="token_de_empresa">Token de empresa</string>
+    <string name="sesion_iniciada">sesion iniciada</string>
 </resources>

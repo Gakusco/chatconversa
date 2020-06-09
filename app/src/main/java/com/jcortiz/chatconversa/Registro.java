@@ -10,6 +10,7 @@ import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
@@ -305,9 +306,10 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onResponse(Call<RespuestaRegistroWS> call, Response<RespuestaRegistroWS> response) {
                 if(response != null && response.body() != null){
-                    RespuestaRegistroWS respuestaWS = response.body();
+                    Toast.makeText(Registro.this,"Registro exitoso",Toast.LENGTH_LONG).show();
                     Log.d("Retrofit","Registro exitoso "+response.body());
                 }else if(response.code() == 400){
+
                     try {
                         JSONObject json = new JSONObject(response.errorBody().string());
                         String message = json.getString("message");

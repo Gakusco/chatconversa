@@ -2,6 +2,7 @@ package com.jcortiz.chatconversa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,10 +12,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.gson.Gson;
 
+import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -35,8 +39,10 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     private TextInputEditText inputUserLogin;
     private TextInputEditText inputContraLogin;
 
+    private TextView mostrarMessageError;
+
     private static String idunica = null;
-    private static final String PREF_KEY = "ID_UNICA";
+    public static final String PREF_KEY = "ID_UNICA";
 
     private SharedPreferences preferencias;
     private SharedPreferences.Editor edit;
@@ -50,12 +56,23 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         inflarVariables();
         uuid(this);
+        revisarPreferencias();
+        inyecionDependenciaRetrofit();
         manejoErroresInput();
         clicEnUnBoton();
 
+    }
+
+    private void revisarPreferencias() {
+        String userCarga = preferencias.getString("user","");
+        String passCarga = preferencias.getString("password","");
+        if(userCarga != "" && passCarga != ""){
+            Intent i = new Intent(Principal.this,sesionIniciada.class);
+            startActivity(i);
+            finish();
+        }
     }
 
     private void manejoErroresInput() {
@@ -117,7 +134,10 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
         inputUserLogin = findViewById(R.id.inputUserLogin);
         inputContraLogin = findViewById(R.id.inputContraLogin);
 
+        mostrarMessageError = findViewById(R.id.mostrarMessageErrorLogin);
+
         preferencias = getSharedPreferences(PREF_KEY,MODE_PRIVATE);
+        edit = preferencias.edit();
     }
 
 
@@ -125,11 +145,40 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnIniciarSesion:
-                Call<RespuestaLoginWS> resp = servicio.login(inputUserLogin.getText().toString(),inputContraLogin.toString(),preferencias.getString(PREF_KEY,"errorDeDeviceId"));
+                final Call<RespuestaLoginWS> resp = servicio.login(inputUserLogin.getText().toString(),inputContraLogin.getText().toString(),preferencias.getString(PREF_KEY,"errorDeDeviceId"));
                 resp.enqueue(new Callback<RespuestaLoginWS>() {
                     @Override
                     public void onResponse(Call<RespuestaLoginWS> call, Response<RespuestaLoginWS> response) {
+                        if(response != null && response.body() != null){
+                            Log.d("Retrofit",response.body().getUser().getId().toString());
+                            mostrarMessageError.setVisibility(View.INVISIBLE);
+                            edit.putString("user",inputUserLogin.getText().toString());
+                            edit.putString("password",inputContraLogin.getText().toString());
+                            edit.putString("userId",response.body().getUser().getId().toString());
+                            edit.putString("token",response.body().getToken());
+                            edit.commit();
+                            Intent i = new Intent(Principal.this,sesionIniciada.class);
+                            startActivity(i);
+                            finish();
 
+                        }else if(!response.isSuccessful()){
+                            Gson gson = new Gson();
+                            mensajeErrorLogin mensajeDeError = gson.fromJson(response.errorBody().charStream(),mensajeErrorLogin.class);
+                            if(mensajeDeError.getMessage() != null){
+                                mostrarMessageError.setVisibility(View.VISIBLE);
+                                mostrarMessageError.setText(mensajeDeError.getMessage());
+                            }
+                            if(mensajeDeError.getErrors() != null){
+                                if(mensajeDeError.getErrors().getUsername() != null){
+                                    String userError = mensajeDeError.getErrors().getUsername().toString();
+                                    layoutUserLogin.setError(userError.substring(1,userError.length()-1));
+                                }
+                                if(mensajeDeError.getErrors().getPassword() != null){
+                                    String passwordError = mensajeDeError.getErrors().getPassword().toString();
+                                    layoutContraLogin.setError(passwordError.substring(1,passwordError.length()-1));
+                                }
+                            }
+                        }
                     }
 
                     @Override
