@@ -1,31 +1,30 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.clasesDeError;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
-public class mensajeErrorLogin {
-    private int codeStatus;
-
+public class mensajeErrorRegistro {
+    private Integer statusCode;
     private String message;
 
     @SerializedName("errors")
     @Expose
-    private loginErrors errors;
+    private userErrors errors;
 
-    public mensajeErrorLogin(int codeStatus, String message, loginErrors errors) {
-        this.codeStatus = codeStatus;
+    public mensajeErrorRegistro(Integer statusCode, String message, userErrors errors) {
+        this.statusCode = statusCode;
         this.message = message;
         this.errors = errors;
     }
 
-    public int getCodeStatus() {
-        return codeStatus;
+    public Integer getStatusCode() {
+        return statusCode;
     }
 
-    public void setCodeStatus(int codeStatus) {
-        this.codeStatus = codeStatus;
+    public void setStatusCode(Integer statusCode) {
+        this.statusCode = statusCode;
     }
 
     public String getMessage() {
@@ -36,11 +35,11 @@ public class mensajeErrorLogin {
         this.message = message;
     }
 
-    public loginErrors getErrors() {
+    public userErrors getErrors() {
         return errors;
     }
 
-    public void setErrors(loginErrors errors) {
+    public void setErrors(userErrors errors) {
         this.errors = errors;
     }
 
@@ -48,21 +47,21 @@ public class mensajeErrorLogin {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        mensajeErrorLogin that = (mensajeErrorLogin) o;
-        return codeStatus == that.codeStatus &&
+        mensajeErrorRegistro that = (mensajeErrorRegistro) o;
+        return Objects.equals(statusCode, that.statusCode) &&
                 Objects.equals(message, that.message) &&
                 Objects.equals(errors, that.errors);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(codeStatus, message, errors);
+        return Objects.hash(statusCode, message, errors);
     }
 
     @Override
     public String toString() {
-        return "mensajeErrorLogin{" +
-                "codeStatus=" + codeStatus +
+        return "mensajeErrorRegistro{" +
+                "statusCode=" + statusCode +
                 ", message='" + message + '\'' +
                 ", errors=" + errors +
                 '}';

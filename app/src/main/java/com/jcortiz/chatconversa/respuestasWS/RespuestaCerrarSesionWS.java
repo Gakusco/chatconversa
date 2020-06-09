@@ -1,16 +1,13 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.respuestasWS;
 
 import java.util.Objects;
 
-public class RespuestaRegistroWS {
+public class RespuestaCerrarSesionWS {
     private int statusCode;
     private String message;
-    private User data;
 
-    public RespuestaRegistroWS(int statusCode, String message, User data) {
-        this.statusCode = statusCode;
+    public RespuestaCerrarSesionWS(String message) {
         this.message = message;
-        this.data = data;
     }
 
     public int getStatusCode() {
@@ -29,35 +26,25 @@ public class RespuestaRegistroWS {
         this.message = message;
     }
 
-    public User getData() {
-        return data;
-    }
-
-    public void setData(User data) {
-        this.data = data;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RespuestaRegistroWS that = (RespuestaRegistroWS) o;
+        RespuestaCerrarSesionWS that = (RespuestaCerrarSesionWS) o;
         return statusCode == that.statusCode &&
-                Objects.equals(message, that.message) &&
-                Objects.equals(data, that.data);
+                Objects.equals(message, that.message);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(statusCode, message, data);
+        return Objects.hash(statusCode, message);
     }
 
     @Override
     public String toString() {
-        return "RespuestaRegistroWS{" +
+        return "RespuestaCerrarSesionWS{" +
                 "statusCode=" + statusCode +
                 ", message='" + message + '\'' +
-                ", data=" + data +
                 '}';
     }
 }

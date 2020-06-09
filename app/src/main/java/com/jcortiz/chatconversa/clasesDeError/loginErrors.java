@@ -1,7 +1,4 @@
-package com.jcortiz.chatconversa;
-
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+package com.jcortiz.chatconversa.clasesDeError;
 
 import java.util.List;
 import java.util.Objects;

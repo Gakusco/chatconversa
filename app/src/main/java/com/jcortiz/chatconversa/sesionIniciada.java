@@ -13,6 +13,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.jcortiz.chatconversa.clasesDeError.errorCerrarSesion;
+import com.jcortiz.chatconversa.respuestasWS.RespuestaCerrarSesionWS;
 
 import retrofit2.Call;
 import retrofit2.Callback;

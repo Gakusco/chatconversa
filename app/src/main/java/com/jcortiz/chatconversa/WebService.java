@@ -1,5 +1,9 @@
 package com.jcortiz.chatconversa;
 
+import com.jcortiz.chatconversa.respuestasWS.RespuestaCerrarSesionWS;
+import com.jcortiz.chatconversa.respuestasWS.RespuestaLoginWS;
+import com.jcortiz.chatconversa.respuestasWS.RespuestaRegistroWS;
+
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;

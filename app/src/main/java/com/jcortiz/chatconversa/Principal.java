@@ -2,7 +2,6 @@ package com.jcortiz.chatconversa;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,8 +16,9 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+import com.jcortiz.chatconversa.clasesDeError.mensajeErrorLogin;
+import com.jcortiz.chatconversa.respuestasWS.RespuestaLoginWS;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
