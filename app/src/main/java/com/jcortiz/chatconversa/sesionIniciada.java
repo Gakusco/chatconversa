@@ -3,6 +3,8 @@ package com.jcortiz.chatconversa;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -38,6 +40,8 @@ public class sesionIniciada extends AppCompatActivity {
     private String image;
     private String thumbnail;
 
+    private AlertDialog.Builder builder;
+
     private TextView textoNombre;
     private TextView textoApellido;
 
@@ -67,6 +71,8 @@ public class sesionIniciada extends AppCompatActivity {
 
         textoNombre = findViewById(R.id.nombreUsuario);
         textoApellido = findViewById(R.id.apellidoUsuario);
+
+        builder = new AlertDialog.Builder(this);
     }
 
     @Override
@@ -85,42 +91,58 @@ public class sesionIniciada extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.cerrarSesionID:
-                Log.d("Retrofit",token+" "+username+" "+idUser);
-                final Call<RespuestaCerrarSesionWS> resp = servicio.logout(token,idUser,username);
+                builder.setMessage(R.string.mensaje)
+                        .setTitle(R.string.confirmar)
+                        .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                final Call<RespuestaCerrarSesionWS> resp = servicio.logout(token,idUser,username);
 
-                resp.enqueue(new Callback<RespuestaCerrarSesionWS>() {
-                    @Override
-                    public void onResponse(Call<RespuestaCerrarSesionWS> call, Response<RespuestaCerrarSesionWS> response) {
-                        if(response != null && response.body() != null){
-                            SharedPreferences pref = getSharedPreferences(Principal.PREF_KEY,0);
-                            pref.edit().clear().commit();
-                            Intent i = new Intent(sesionIniciada.this,splashLogout.class);
-                            startActivity(i);
-                            finish();
-                        }else{
-                            if(!response.isSuccessful()){
-                                if(!response.isSuccessful()) {
-                                    Gson gson = new Gson();
-                                    errorCerrarSesion errorCerrar = gson.fromJson(response.errorBody().charStream(), errorCerrarSesion.class);
-                                    if(errorCerrar.getErrors() != null){
-                                        if(errorCerrar.getErrors().getUserId() != null){
-                                            Log.d("Retrofit",errorCerrar.getErrors().getUserId().toString());
-                                        }
-                                        if(errorCerrar.getErrors().getUsername() != null){
-                                            Log.d("Retrofit",errorCerrar.getErrors().getUsername().toString());
+                                resp.enqueue(new Callback<RespuestaCerrarSesionWS>() {
+                                    @Override
+                                    public void onResponse(Call<RespuestaCerrarSesionWS> call, Response<RespuestaCerrarSesionWS> response) {
+                                        if(response != null && response.body() != null){
+                                            SharedPreferences pref = getSharedPreferences(Principal.PREF_KEY,0);
+                                            pref.edit().clear().commit();
+                                            Intent i = new Intent(sesionIniciada.this,splashLogout.class);
+                                            startActivity(i);
+                                            finish();
+                                        }else{
+                                            if(!response.isSuccessful()){
+                                                if(!response.isSuccessful()) {
+                                                    Gson gson = new Gson();
+                                                    errorCerrarSesion errorCerrar = gson.fromJson(response.errorBody().charStream(), errorCerrarSesion.class);
+                                                    if(errorCerrar.getErrors() != null){
+                                                        if(errorCerrar.getErrors().getUserId() != null){
+                                                            Log.d("Retrofit",errorCerrar.getErrors().getUserId().toString());
+                                                        }
+                                                        if(errorCerrar.getErrors().getUsername() != null){
+                                                            Log.d("Retrofit",errorCerrar.getErrors().getUsername().toString());
+                                                        }
+                                                    }
+                                                    Toast.makeText(sesionIniciada.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
+                                                }
+                                            }
                                         }
                                     }
-                                    Toast.makeText(sesionIniciada.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
-                                }
+
+                                    @Override
+                                    public void onFailure(Call<RespuestaCerrarSesionWS> call, Throwable t) {
+
+                                    }
+                                });
+                                dialogInterface.dismiss();
                             }
-                        }
-                    }
-
+                        })
+                .setNeutralButton("Cancelar", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onFailure(Call<RespuestaCerrarSesionWS> call, Throwable t) {
-
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
                     }
                 });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

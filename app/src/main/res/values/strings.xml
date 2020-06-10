@@ -14,4 +14,6 @@
     <string name="token_de_empresa">Token de empresa</string>
     <string name="sesion_iniciada">sesion iniciada</string>
     <string name="bienvenido">Bienvenido</string>
+    <string name="mensaje">¿Está seguro que desea cerrar sesión?</string>
+    <string name="confirmar">Confirmar</string>
 </resources>
