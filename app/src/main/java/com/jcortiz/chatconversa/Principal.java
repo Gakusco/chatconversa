@@ -90,7 +90,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             @Override
             public void afterTextChanged(Editable editable) {
                 if((editable.length()>0 && editable.length() < 4) || editable.length() > layoutUserLogin.getCounterMaxLength()){
-                    layoutUserLogin.setError("Mínimo 4 caracteres, máximo 8");
+                    layoutUserLogin.setError("Mínimo 4 caracteres, máximo 8.");
                 }else{
                     layoutUserLogin.setError(null);
                 }
@@ -111,7 +111,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
             @Override
             public void afterTextChanged(Editable editable) {
                 if (!regexPassword.matcher(inputContraLogin.getEditableText().toString()).matches() && editable.length()>0) {
-                    layoutContraLogin.setError("Minimo 1 mayuscula, 1 minuscula, 1 numero, 6 carectares, Maximo 12 caracteres");
+                    layoutContraLogin.setError("Mínimo 1 mayúscula, 1 minúscula, 1 número, 6 caracteres, Máximo 12 caracteres.");
                 }else{
                     layoutContraLogin.setError(null);
                 }

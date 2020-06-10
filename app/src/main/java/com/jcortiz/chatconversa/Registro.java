@@ -86,7 +86,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > layoutName.getCounterMaxLength()){
-                    layoutName.setError("Ha superado el máximo de caracteres");
+                    layoutName.setError("Ha superado el máximo de caracteres.");
                 }else{
                     layoutName.setError(null);
                 }
@@ -107,7 +107,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(editable.length() > layoutLastName.getCounterMaxLength()){
-                    layoutLastName.setError("Ha superado el máximo de caracteres");
+                    layoutLastName.setError("Ha superado el máximo de caracteres.");
                 }else{
                     layoutLastName.setError(null);
                 }
@@ -128,7 +128,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if((editable.length()>0 && editable.length() < 7) || editable.length() > layoutRun.getCounterMaxLength()){
-                    layoutRun.setError("Mínimo 7 números, máximo 8");
+                    layoutRun.setError("Mínimo 7 números, máximo 8.");
                 }else{
                     layoutRun.setError(null);
                 }
@@ -149,7 +149,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if((editable.length()>0 && editable.length() < 4) || editable.length() > layoutUsername.getCounterMaxLength()){
-                    layoutUsername.setError("Mínimo 4 caracteres, máximo 8");
+                    layoutUsername.setError("Mínimo 4 caracteres, máximo 8.");
                 }else{
                     layoutUsername.setError(null);
                 }
@@ -170,7 +170,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(!Patterns.EMAIL_ADDRESS.matcher(email.getEditableText().toString().trim()).matches() && editable.length()>0){
-                    layoutEmail.setError("Debe tener formato email y no superar los 50 caracteres");
+                    layoutEmail.setError("Debe tener formato email y no superar los 50 caracteres.");
                 }else{
                     layoutEmail.setError(null);
                 }
@@ -192,12 +192,12 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if (!regexPassword.matcher(password.getEditableText().toString()).matches() && editable.length()>0) {
-                    layoutPassword.setError("Minimo 1 mayuscula, 1 minuscula, 1 numero, 6 carectares, Maximo 12 caracteres");
+                    layoutPassword.setError("Mínimo 1 mayúscula, 1 minúscula, 1 número y 6 caracteres. Máximo 12 caracteres.");
                 }else{
                     layoutPassword.setError(null);
                 }
                 if(!confirmPassword.getEditableText().toString().equals(password.getText().toString())){
-                    layoutConfirmPassword.setError("Las contraseñas son distintas");
+                    layoutConfirmPassword.setError("Las contraseñas son distintas.");
                 }else{
                     layoutConfirmPassword.setError(null);
                 }
@@ -218,7 +218,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(!confirmPassword.getEditableText().toString().equals(password.getText().toString())){
-                    layoutConfirmPassword.setError("Las contraseñas son distintas");
+                    layoutConfirmPassword.setError("Las contraseñas son distintas.");
                 }else{
                     layoutConfirmPassword.setError(null);
                 }
@@ -239,7 +239,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void afterTextChanged(Editable editable) {
                 if(!regextTokenEnterprise.matcher(tokenEmprise.getEditableText().toString()).matches()){
-                    layoutTokenEmprise.setError("Solo mayusculas y numeros");
+                    layoutTokenEmprise.setError("Solo mayúsculas y números.");
                 }else{
                     layoutTokenEmprise.setError(null);
                 }
