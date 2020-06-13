@@ -313,6 +313,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                 }else if(!response.isSuccessful()) {
                     Gson gson = new Gson();
                     mensajeErrorRegistro mensajeDeError = gson.fromJson(response.errorBody().charStream(),mensajeErrorRegistro.class);
+                    Toast.makeText(Registro.this,"Revise los campos",Toast.LENGTH_SHORT).show();
                     if(mensajeDeError.getMessage() != null){
                         textoError.setVisibility(View.VISIBLE);
                         textoError.setText(mensajeDeError.getMessage());

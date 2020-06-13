@@ -53,6 +53,10 @@ public class sesionIniciada extends AppCompatActivity {
         inflarComponentes();
         barraDeAccion();
 
+        Log.d("Retrofit",token);
+        Log.d("Retrofit",idUser);
+        Log.d("Retrofit",name);
+
         textoNombre.setText(name);
         textoApellido.setText(lastName);
     }
@@ -108,21 +112,21 @@ public class sesionIniciada extends AppCompatActivity {
                                             startActivity(i);
                                             finish();
                                         }else{
-                                            if(!response.isSuccessful()){
-                                                if(!response.isSuccessful()) {
-                                                    Gson gson = new Gson();
-                                                    errorCerrarSesion errorCerrar = gson.fromJson(response.errorBody().charStream(), errorCerrarSesion.class);
-                                                    if(errorCerrar.getErrors() != null){
-                                                        if(errorCerrar.getErrors().getUserId() != null){
-                                                            Log.d("Retrofit",errorCerrar.getErrors().getUserId().toString());
-                                                        }
-                                                        if(errorCerrar.getErrors().getUsername() != null){
-                                                            Log.d("Retrofit",errorCerrar.getErrors().getUsername().toString());
-                                                        }
+                                            if(!response.isSuccessful()) {
+                                                Gson gson = new Gson();
+                                                errorCerrarSesion errorCerrar = gson.fromJson(response.errorBody().charStream(), errorCerrarSesion.class);
+                                                if(errorCerrar.getErrors() != null){
+                                                    if(errorCerrar.getErrors().getUserId() != null){
+                                                        Toast.makeText(sesionIniciada.this,""+errorCerrar.getErrors().getUserId(),Toast.LENGTH_LONG).show();
+                                                        Log.d("Retrofit",errorCerrar.getErrors().getUserId().toString());
                                                     }
-                                                    Toast.makeText(sesionIniciada.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
+                                                    if(errorCerrar.getErrors().getUsername() != null){
+                                                        Log.d("Retrofit",errorCerrar.getErrors().getUsername().toString());
+                                                    }
                                                 }
+                                                Toast.makeText(sesionIniciada.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
                                             }
+
                                         }
                                     }
 
