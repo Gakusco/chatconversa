@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.views;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,8 +16,11 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.WebService;
+import com.jcortiz.chatconversa.classesError.BadRequest;
+import com.jcortiz.chatconversa.requestsWS.OkRequestWS;
+import com.jcortiz.chatconversa.splashs.SplashRegisterOk;
 
 import java.util.regex.Pattern;
 
@@ -27,7 +30,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class Registro extends AppCompatActivity implements View.OnClickListener {
+public class RegisterView extends AppCompatActivity implements View.OnClickListener {
 
     private TextInputEditText name;
     private TextInputEditText lastName;
@@ -306,14 +309,14 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             @Override
             public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                 if(response != null && response.body() != null){
-                    Intent i = new Intent(Registro.this,splashRegistroExitoso.class);
+                    Intent i = new Intent(RegisterView.this, SplashRegisterOk.class);
                     startActivity(i);
                     textoError.setVisibility(View.GONE);
                     finish();
                 }else if(!response.isSuccessful()) {
                     Gson gson = new Gson();
                     BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                    Toast.makeText(Registro.this,"Revise los campos",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RegisterView.this,"Revise los campos",Toast.LENGTH_SHORT).show();
                     if(mensajeDeError.getMessage() != null){
                         textoError.setVisibility(View.VISIBLE);
                         textoError.setText(mensajeDeError.getMessage());

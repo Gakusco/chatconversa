@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.splashs;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,21 +7,24 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
-public class splashLogin extends AppCompatActivity {
+import com.jcortiz.chatconversa.views.LoginView;
+import com.jcortiz.chatconversa.R;
 
-    private final int DURACION = 2000;
+public class SplashLogout extends AppCompatActivity {
+
+    private final int DURACION = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash_login);
+        setContentView(R.layout.activity_splash_logout);
 
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(splashLogin.this, sesionIniciada.class);
+                Intent i = new Intent(SplashLogout.this, LoginView.class);
                 startActivity(i);
                 finish();
             };

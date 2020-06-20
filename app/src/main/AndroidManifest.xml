@@ -12,27 +12,27 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".splashLogout"
+        <activity android:name=".splashs.SplashLogout"
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
-            android:name=".splashLogin"
+            android:name=".splashs.SplashLogin"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".splashRegistroExitoso"
+            android:name=".splashs.SplashRegisterOk"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Principal"
+            android:name=".views.LoginView"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".sesionIniciada" />
+        <activity android:name=".views.HomeView" />
         <activity
-            android:name=".Registro"
-            android:parentActivityName=".Principal">
+            android:name=".views.RegisterView"
+            android:parentActivityName=".views.LoginView">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Principal" />
+                android:value=".views.LoginView" />
         </activity>
         <activity
-            android:name=".splashAbrirApp"
+            android:name=".splashs.SplashOpenApp"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

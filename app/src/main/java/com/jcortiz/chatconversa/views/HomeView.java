@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.views;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,8 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.WebService;
+import com.jcortiz.chatconversa.classesError.BadRequest;
+import com.jcortiz.chatconversa.requestsWS.OkRequestWS;
+import com.jcortiz.chatconversa.splashs.SplashLogout;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,7 +28,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class sesionIniciada extends AppCompatActivity {
+public class HomeView extends AppCompatActivity {
 
     private static WebService servicio;
     private SharedPreferences preferencias;
@@ -62,7 +65,7 @@ public class sesionIniciada extends AppCompatActivity {
     }
 
     private void inflarComponentes() {
-        preferencias = getSharedPreferences(Principal.PREF_KEY,MODE_PRIVATE);
+        preferencias = getSharedPreferences(LoginView.PREF_KEY,MODE_PRIVATE);
         token = "Bearer "+preferencias.getString("token","errorToken");
         idUser = preferencias.getString("userId","errorId");
         name = preferencias.getString("name","errorName");
@@ -106,9 +109,9 @@ public class sesionIniciada extends AppCompatActivity {
                                     @Override
                                     public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                                         if(response != null && response.body() != null){
-                                            SharedPreferences pref = getSharedPreferences(Principal.PREF_KEY,0);
+                                            SharedPreferences pref = getSharedPreferences(LoginView.PREF_KEY,0);
                                             pref.edit().clear().commit();
-                                            Intent i = new Intent(sesionIniciada.this,splashLogout.class);
+                                            Intent i = new Intent(HomeView.this, SplashLogout.class);
                                             startActivity(i);
                                             finish();
                                         }else{
@@ -117,14 +120,14 @@ public class sesionIniciada extends AppCompatActivity {
                                                 BadRequest errorCerrar = gson.fromJson(response.errorBody().charStream(), BadRequest.class);
                                                 if(errorCerrar.getErrors() != null){
                                                     if(errorCerrar.getErrors().getUserId() != null){
-                                                        Toast.makeText(sesionIniciada.this,""+errorCerrar.getErrors().getUserId(),Toast.LENGTH_LONG).show();
+                                                        Toast.makeText(HomeView.this,""+errorCerrar.getErrors().getUserId(),Toast.LENGTH_LONG).show();
                                                         Log.d("Retrofit",errorCerrar.getErrors().getUserId().toString());
                                                     }
                                                     if(errorCerrar.getErrors().getUsername() != null){
                                                         Log.d("Retrofit",errorCerrar.getErrors().getUsername().toString());
                                                     }
                                                 }
-                                                Toast.makeText(sesionIniciada.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
+                                                Toast.makeText(HomeView.this,errorCerrar.getMessage(),Toast.LENGTH_LONG).show();
                                             }
 
                                         }

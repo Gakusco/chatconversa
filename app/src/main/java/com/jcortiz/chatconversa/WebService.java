@@ -1,6 +1,6 @@
 package com.jcortiz.chatconversa;
 
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.requestsWS.OkRequestWS;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
