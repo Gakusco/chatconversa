@@ -16,8 +16,8 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.clasesDeError.mensajeErrorRegistro;
-import com.jcortiz.chatconversa.respuestasWS.RespuestaRegistroWS;
+import com.jcortiz.chatconversa.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 
 import java.util.regex.Pattern;
 
@@ -292,7 +292,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             layoutConfirmPassword.setError("Campo obligatorio");
             return;
         }
-        final Call<RespuestaRegistroWS> resp = servicio.register(
+        final Call<OkRequestWS> resp = servicio.register(
                 name.getText().toString(),
                 lastName.getText().toString(),
                 run.getText().toString(),
@@ -302,9 +302,9 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                 tokenEmprise.getText().toString()
         );
 
-        resp.enqueue(new Callback<RespuestaRegistroWS>() {
+        resp.enqueue(new Callback<OkRequestWS>() {
             @Override
-            public void onResponse(Call<RespuestaRegistroWS> call, Response<RespuestaRegistroWS> response) {
+            public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                 if(response != null && response.body() != null){
                     Intent i = new Intent(Registro.this,splashRegistroExitoso.class);
                     startActivity(i);
@@ -312,7 +312,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
                     finish();
                 }else if(!response.isSuccessful()) {
                     Gson gson = new Gson();
-                    mensajeErrorRegistro mensajeDeError = gson.fromJson(response.errorBody().charStream(),mensajeErrorRegistro.class);
+                    BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
                     Toast.makeText(Registro.this,"Revise los campos",Toast.LENGTH_SHORT).show();
                     if(mensajeDeError.getMessage() != null){
                         textoError.setVisibility(View.VISIBLE);
@@ -359,7 +359,7 @@ public class Registro extends AppCompatActivity implements View.OnClickListener 
             }
 
             @Override
-            public void onFailure(Call<RespuestaRegistroWS> call, Throwable t) {
+            public void onFailure(Call<OkRequestWS> call, Throwable t) {
                 Log.d("Retrofit","Error "+t.getMessage());
             }
         });

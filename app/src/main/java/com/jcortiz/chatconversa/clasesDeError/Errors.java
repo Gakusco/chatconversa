@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 import java.util.Objects;
 
-public class userErrors {
+public class Errors {
     @SerializedName("name")
     @Expose
     private List<String> name;
@@ -28,8 +28,11 @@ public class userErrors {
     @SerializedName("token_enterprise")
     @Expose
     private List<String> tokenEnterprise;
+    @SerializedName("user_id")
+    @Expose
+    private List<String> userId;
 
-    public userErrors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise) {
+    public Errors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise, List<String> userId) {
         this.name = name;
         this.lastname = lastname;
         this.run = run;
@@ -37,6 +40,7 @@ public class userErrors {
         this.email = email;
         this.password = password;
         this.tokenEnterprise = tokenEnterprise;
+        this.userId = userId;
     }
 
     public List<String> getName() {
@@ -95,28 +99,37 @@ public class userErrors {
         this.tokenEnterprise = tokenEnterprise;
     }
 
+    public List<String> getUserId() {
+        return userId;
+    }
+
+    public void setUserId(List<String> userId) {
+        this.userId = userId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        userErrors that = (userErrors) o;
-        return Objects.equals(name, that.name) &&
-                Objects.equals(lastname, that.lastname) &&
-                Objects.equals(run, that.run) &&
-                Objects.equals(username, that.username) &&
-                Objects.equals(email, that.email) &&
-                Objects.equals(password, that.password) &&
-                Objects.equals(tokenEnterprise, that.tokenEnterprise);
+        Errors errors = (Errors) o;
+        return Objects.equals(name, errors.name) &&
+                Objects.equals(lastname, errors.lastname) &&
+                Objects.equals(run, errors.run) &&
+                Objects.equals(username, errors.username) &&
+                Objects.equals(email, errors.email) &&
+                Objects.equals(password, errors.password) &&
+                Objects.equals(tokenEnterprise, errors.tokenEnterprise) &&
+                Objects.equals(userId, errors.userId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, lastname, run, username, email, password, tokenEnterprise);
+        return Objects.hash(name, lastname, run, username, email, password, tokenEnterprise, userId);
     }
 
     @Override
     public String toString() {
-        return "userErrors{" +
+        return "Errors{" +
                 "name=" + name +
                 ", lastname=" + lastname +
                 ", run=" + run +
@@ -124,6 +137,7 @@ public class userErrors {
                 ", email=" + email +
                 ", password=" + password +
                 ", tokenEnterprise=" + tokenEnterprise +
+                ", userId=" + userId +
                 '}';
     }
 }

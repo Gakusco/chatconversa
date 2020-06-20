@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.clasesDeError.errorCerrarSesion;
-import com.jcortiz.chatconversa.respuestasWS.RespuestaCerrarSesionWS;
+import com.jcortiz.chatconversa.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -100,11 +100,11 @@ public class sesionIniciada extends AppCompatActivity {
                         .setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                final Call<RespuestaCerrarSesionWS> resp = servicio.logout(token,idUser,username);
+                                final Call<OkRequestWS> resp = servicio.logout(token,idUser,username);
 
-                                resp.enqueue(new Callback<RespuestaCerrarSesionWS>() {
+                                resp.enqueue(new Callback<OkRequestWS>() {
                                     @Override
-                                    public void onResponse(Call<RespuestaCerrarSesionWS> call, Response<RespuestaCerrarSesionWS> response) {
+                                    public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                                         if(response != null && response.body() != null){
                                             SharedPreferences pref = getSharedPreferences(Principal.PREF_KEY,0);
                                             pref.edit().clear().commit();
@@ -114,7 +114,7 @@ public class sesionIniciada extends AppCompatActivity {
                                         }else{
                                             if(!response.isSuccessful()) {
                                                 Gson gson = new Gson();
-                                                errorCerrarSesion errorCerrar = gson.fromJson(response.errorBody().charStream(), errorCerrarSesion.class);
+                                                BadRequest errorCerrar = gson.fromJson(response.errorBody().charStream(), BadRequest.class);
                                                 if(errorCerrar.getErrors() != null){
                                                     if(errorCerrar.getErrors().getUserId() != null){
                                                         Toast.makeText(sesionIniciada.this,""+errorCerrar.getErrors().getUserId(),Toast.LENGTH_LONG).show();
@@ -131,7 +131,7 @@ public class sesionIniciada extends AppCompatActivity {
                                     }
 
                                     @Override
-                                    public void onFailure(Call<RespuestaCerrarSesionWS> call, Throwable t) {
+                                    public void onFailure(Call<OkRequestWS> call, Throwable t) {
 
                                     }
                                 });

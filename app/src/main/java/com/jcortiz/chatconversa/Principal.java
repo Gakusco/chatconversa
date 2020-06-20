@@ -16,8 +16,8 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.clasesDeError.mensajeErrorLogin;
-import com.jcortiz.chatconversa.respuestasWS.RespuestaLoginWS;
+import com.jcortiz.chatconversa.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -145,10 +145,10 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btnIniciarSesion:
-                final Call<RespuestaLoginWS> resp = servicio.login(inputUserLogin.getText().toString(),inputContraLogin.getText().toString(),preferencias.getString(PREF_KEY,"errorDeDeviceId"));
-                resp.enqueue(new Callback<RespuestaLoginWS>() {
+                final Call<OkRequestWS> resp = servicio.login(inputUserLogin.getText().toString(),inputContraLogin.getText().toString(),preferencias.getString(PREF_KEY,"errorDeDeviceId"));
+                resp.enqueue(new Callback<OkRequestWS>() {
                     @Override
-                    public void onResponse(Call<RespuestaLoginWS> call, Response<RespuestaLoginWS> response) {
+                    public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                         if(response != null && response.body() != null){
                             Log.d("Retrofit",response.body().getUser().getId().toString());
                             mostrarMessageError.setVisibility(View.INVISIBLE);
@@ -169,7 +169,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
 
                         }else if(!response.isSuccessful()){
                             Gson gson = new Gson();
-                            mensajeErrorLogin mensajeDeError = gson.fromJson(response.errorBody().charStream(),mensajeErrorLogin.class);
+                            BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
                             if(mensajeDeError.getMessage() != null){
                                 mostrarMessageError.setVisibility(View.VISIBLE);
                                 mostrarMessageError.setText(mensajeDeError.getMessage());
@@ -188,7 +188,7 @@ public class Principal extends AppCompatActivity implements View.OnClickListener
                     }
 
                     @Override
-                    public void onFailure(Call<RespuestaLoginWS> call, Throwable t) {
+                    public void onFailure(Call<OkRequestWS> call, Throwable t) {
 
                     }
                 });

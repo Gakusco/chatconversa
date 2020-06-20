@@ -5,9 +5,13 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.Objects;
 
-public class RespuestaLoginWS {
+public class OkRequestWS {
+    @SerializedName("status_code")
+    @Expose
     private int code;
     private String message;
+    @SerializedName("token")
+    @Expose
     private String token;
     @SerializedName("data")
     @Expose
@@ -49,7 +53,7 @@ public class RespuestaLoginWS {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        RespuestaLoginWS that = (RespuestaLoginWS) o;
+        OkRequestWS that = (OkRequestWS) o;
         return code == that.code &&
                 Objects.equals(message, that.message) &&
                 Objects.equals(token, that.token) &&

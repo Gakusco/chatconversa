@@ -1,8 +1,6 @@
 package com.jcortiz.chatconversa;
 
-import com.jcortiz.chatconversa.respuestasWS.RespuestaCerrarSesionWS;
-import com.jcortiz.chatconversa.respuestasWS.RespuestaLoginWS;
-import com.jcortiz.chatconversa.respuestasWS.RespuestaRegistroWS;
+import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -14,7 +12,7 @@ public interface WebService {
 
     @FormUrlEncoded
     @POST("create")
-    Call<RespuestaRegistroWS> register(
+    Call<OkRequestWS> register(
             @Field("name") String nombre,
             @Field("lastname") String apellido,
             @Field("run") String run,
@@ -26,7 +24,7 @@ public interface WebService {
 
     @FormUrlEncoded
     @POST("login")
-    Call<RespuestaLoginWS> login(
+    Call<OkRequestWS> login(
             @Field("username") String nombre,
             @Field("password") String password,
             @Field("device_id") String deviceId
@@ -34,7 +32,7 @@ public interface WebService {
 
     @FormUrlEncoded
     @POST("logout")
-    Call<RespuestaCerrarSesionWS> logout(
+    Call<OkRequestWS> logout(
             @Header("Authorization") String token,
             @Field("user_id") String userId,
             @Field("username") String username
