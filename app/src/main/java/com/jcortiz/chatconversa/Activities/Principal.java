@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,23 +54,24 @@ public class Principal extends AppCompatActivity {
     private String image;
     private String thumbnail;
 
+    //Header
+    View header;
+
+    private TextView textoNombreHeader;
+    private TextView textoCorreoHeader;
+    private ImageView imagenHeader;
 
     private AppBarConfiguration mAppBarConfiguration;
     private AlertDialog.Builder builder;
-
-    private TextView textoNombre;
-    private TextView textoApellido;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
-        inyecionDependenciaRetrofit();
-        inflarComponentes();
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,8 +80,11 @@ public class Principal extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        header = navigationView.getHeaderView(0);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -89,6 +94,15 @@ public class Principal extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        inyecionDependenciaRetrofit();
+        inflarComponentes();
+        modificarHeader();
+    }
+
+    private void modificarHeader() {
+        textoNombreHeader.setText(name+" "+lastName);
+        textoCorreoHeader.setText(email);
     }
 
     private void inflarComponentes() {
@@ -102,6 +116,10 @@ public class Principal extends AppCompatActivity {
         email = preferencias.getString("email","errorEmail");
         image = preferencias.getString("image","errorImage");
         thumbnail = preferencias.getString("thumbnail","errorThumbnail");
+
+        textoCorreoHeader = header.findViewById(R.id.textEmailHeader);
+        textoNombreHeader = header.findViewById(R.id.textNombreHeader);
+        imagenHeader = header.findViewById(R.id.imagenUsuarioHeader);
 
         builder = new AlertDialog.Builder(this);
     }
