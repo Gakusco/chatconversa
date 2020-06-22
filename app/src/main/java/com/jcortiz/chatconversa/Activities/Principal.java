@@ -4,12 +4,15 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +28,7 @@ import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 import com.jcortiz.chatconversa.splashes.splashLogout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -54,12 +58,14 @@ public class Principal extends AppCompatActivity {
     private String image;
     private String thumbnail;
 
+    public static final int CAMERA = 1;
+
     //Header
     View header;
 
     private TextView textoNombreHeader;
     private TextView textoCorreoHeader;
-    private ImageView imagenHeader;
+    private ImageButton imagenHeader;
 
     private AppBarConfiguration mAppBarConfiguration;
     private AlertDialog.Builder builder;
@@ -103,6 +109,44 @@ public class Principal extends AppCompatActivity {
     private void modificarHeader() {
         textoNombreHeader.setText(name+" "+lastName);
         textoCorreoHeader.setText(email);
+        obtenerImagen();
+    }
+
+    private void obtenerImagen() {
+        imagenHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String opciones[] = {"Tomar foto","Subir imagen","Cancelar"};
+                AlertDialog.Builder alert = new AlertDialog.Builder(Principal.this);
+                alert.setTitle("Seleccione una opción");
+                alert.setItems(opciones, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if(opciones[i] == "Subir imagen"){
+                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                            intent.setType("image/");
+                            startActivityForResult(intent.createChooser(intent,"Seleccione la Aplicación"),CAMERA);
+                        }else if (opciones[i] == "Tomar foto"){
+                            Toast.makeText(Principal.this,"Función en construcción",Toast.LENGTH_SHORT).show();
+                        }else{
+                            dialogInterface.dismiss();
+                        }
+                    }
+                });
+                alert.show();
+            }
+
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode==RESULT_OK){
+            Uri raiz = data.getData();
+            imagenHeader.setImageURI(raiz);
+        }
     }
 
     private void inflarComponentes() {
