@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.splashs;
+package com.jcortiz.chatconversa.splashes;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
-import com.jcortiz.chatconversa.views.LoginView;
+import com.jcortiz.chatconversa.Activities.Login;
 import com.jcortiz.chatconversa.R;
 
-public class SplashRegisterOk extends AppCompatActivity {
+public class splashRegistroExitoso extends AppCompatActivity {
 
     private final int DURACION = 3000;
 
@@ -24,7 +24,7 @@ public class SplashRegisterOk extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashRegisterOk.this, LoginView.class);
+                Intent i = new Intent(splashRegistroExitoso.this, Login.class);
                 startActivity(i);
                 finish();
             };

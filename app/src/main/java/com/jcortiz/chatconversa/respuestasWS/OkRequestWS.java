@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.requestsWS;
+package com.jcortiz.chatconversa.respuestasWS;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

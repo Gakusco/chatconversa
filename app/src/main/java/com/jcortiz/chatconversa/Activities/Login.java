@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.views;
+package com.jcortiz.chatconversa.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -18,9 +18,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.WebService;
-import com.jcortiz.chatconversa.classesError.BadRequest;
-import com.jcortiz.chatconversa.requestsWS.OkRequestWS;
-import com.jcortiz.chatconversa.splashs.SplashLogin;
+import com.jcortiz.chatconversa.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.splashes.splashLogin;
 
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -31,7 +31,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class LoginView extends AppCompatActivity implements View.OnClickListener {
+public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private Button btnLogin;
     private Button btnRegistro;
@@ -72,7 +72,7 @@ public class LoginView extends AppCompatActivity implements View.OnClickListener
         String userCarga = preferencias.getString("user","");
         String passCarga = preferencias.getString("password","");
         if(userCarga != "" && passCarga != ""){
-            Intent i = new Intent(LoginView.this, HomeView.class);
+            Intent i = new Intent(Login.this, Principal.class);
             startActivity(i);
             finish();
         }
@@ -166,7 +166,7 @@ public class LoginView extends AppCompatActivity implements View.OnClickListener
                             edit.putString("image",response.body().getUser().getImage());
                             edit.putString("thumbnail",response.body().getUser().getThumbnail());
                             edit.commit();
-                            Intent i = new Intent(LoginView.this, SplashLogin.class);
+                            Intent i = new Intent(Login.this, splashLogin.class);
                             startActivity(i);
                             finish();
 
@@ -197,7 +197,7 @@ public class LoginView extends AppCompatActivity implements View.OnClickListener
                 });
                 break;
             case R.id.btnIrAlRegistro:
-                Intent i = new Intent(this, RegisterView.class);
+                Intent i = new Intent(this, Register.class);
                 startActivity(i);
                 break;
         }
