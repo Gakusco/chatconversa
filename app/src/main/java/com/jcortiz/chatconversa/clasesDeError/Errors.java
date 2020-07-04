@@ -31,8 +31,11 @@ public class Errors {
     @SerializedName("user_id")
     @Expose
     private List<String> userId;
+    @SerializedName("user_image")
+    @Expose
+    private List<String> userImage;
 
-    public Errors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise, List<String> userId) {
+    public Errors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise, List<String> userId, List<String> userImage) {
         this.name = name;
         this.lastname = lastname;
         this.run = run;
@@ -41,6 +44,7 @@ public class Errors {
         this.password = password;
         this.tokenEnterprise = tokenEnterprise;
         this.userId = userId;
+        this.userImage = userImage;
     }
 
     public List<String> getName() {
@@ -107,6 +111,14 @@ public class Errors {
         this.userId = userId;
     }
 
+    public List<String> getUserImage() {
+        return userImage;
+    }
+
+    public void setUserImage(List<String> userImage) {
+        this.userImage = userImage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -119,12 +131,13 @@ public class Errors {
                 Objects.equals(email, errors.email) &&
                 Objects.equals(password, errors.password) &&
                 Objects.equals(tokenEnterprise, errors.tokenEnterprise) &&
-                Objects.equals(userId, errors.userId);
+                Objects.equals(userId, errors.userId) &&
+                Objects.equals(userImage, errors.userImage);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, lastname, run, username, email, password, tokenEnterprise, userId);
+        return Objects.hash(name, lastname, run, username, email, password, tokenEnterprise, userId, userImage);
     }
 
     @Override
@@ -138,6 +151,7 @@ public class Errors {
                 ", password=" + password +
                 ", tokenEnterprise=" + tokenEnterprise +
                 ", userId=" + userId +
+                ", userImage=" + userImage +
                 '}';
     }
 }

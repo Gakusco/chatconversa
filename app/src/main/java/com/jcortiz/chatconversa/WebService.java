@@ -2,11 +2,15 @@ package com.jcortiz.chatconversa;
 
 import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Header;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 public interface WebService {
 
@@ -37,4 +41,22 @@ public interface WebService {
             @Field("user_id") String userId,
             @Field("username") String username
     );
+
+    @Multipart
+    @POST("load/image")
+    Call<OkRequestWS> cargarImagenDeUsario(
+            @Header("Authorization") String token,
+            @Part("user_id") RequestBody userId,
+            @Part("username") RequestBody username,
+            @Part("user_image") RequestBody photo
+    );
+
+    /*@FormUrlEncoded
+    @POST("load/image")
+    Call<OkRequestWS> cargarImagenDeUsario(
+            @Header("Authorization") String token,
+            @Field("user_id") String userId,
+            @Field("username") String username,
+            @Field("user_image") String userImage
+    );*/
 }

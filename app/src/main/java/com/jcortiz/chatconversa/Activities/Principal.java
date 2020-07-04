@@ -1,11 +1,17 @@
 package com.jcortiz.chatconversa.Activities;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuInflater;
@@ -13,7 +19,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,7 +33,9 @@ import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
 import com.jcortiz.chatconversa.splashes.splashLogout;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -36,6 +43,11 @@ import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -55,13 +67,19 @@ public class Principal extends AppCompatActivity {
     private String username;
     private String run;
     private String email;
-    private String image;
+    private String imagePath;
     private String thumbnail;
 
-    public static final int CAMERA = 1;
+    public static final int CARGAR_FOTO = 1;
+    public static final int TOMAR_FOTO = 2;
+    public static final int GUARDAR_FOTO = 3;
+
+    private static final int REQUEST_PERMISSION = 10;
+    private static final String[] PERMISSION_REQUIRED =
+            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.CAMERA};
 
     //Header
-    View header;
+    private View header;
 
     private TextView textoNombreHeader;
     private TextView textoCorreoHeader;
@@ -106,6 +124,29 @@ public class Principal extends AppCompatActivity {
         modificarHeader();
     }
 
+    private boolean permisos() {
+        // Permisos para sacar fotos y guardar fotos
+        for(String permission : PERMISSION_REQUIRED) {
+            if(ContextCompat.checkSelfPermission(Principal.this, permission) != PackageManager.PERMISSION_GRANTED) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION) {
+            if (permisos()) {
+                obtenerImagen();
+            } else {
+                Toast.makeText(Principal.this,"Los permisos deben ser autorizados",Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     private void modificarHeader() {
         textoNombreHeader.setText(name+" "+lastName);
         textoCorreoHeader.setText(email);
@@ -113,21 +154,37 @@ public class Principal extends AppCompatActivity {
     }
 
     private void obtenerImagen() {
+        Log.d("Imagen","La imagen es: "+ imagePath);
+        if (imagePath != "") {
+            MediaScannerConnection.scanFile(this, new String[]{imagePath}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        @Override
+                        public void onScanCompleted(String s, Uri uri) {
+                            Log.i("Ruta","Path "+ imagePath);
+                        }
+                    });
+
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            imagenHeader.setImageBitmap(bitmap);
+        }
         imagenHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String opciones[] = {"Tomar foto","Subir imagen","Cancelar"};
+                String opciones[] = {"Tomar foto","Cancelar"};
                 AlertDialog.Builder alert = new AlertDialog.Builder(Principal.this);
                 alert.setTitle("Seleccione una opción");
                 alert.setItems(opciones, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if(opciones[i] == "Subir imagen"){
-                            Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                            intent.setType("image/");
-                            startActivityForResult(intent.createChooser(intent,"Seleccione la Aplicación"),CAMERA);
+                            /*Se debe corregir*/
+                            //obtenerImagenDeLaGaleria();
                         }else if (opciones[i] == "Tomar foto"){
-                            Toast.makeText(Principal.this,"Función en construcción",Toast.LENGTH_SHORT).show();
+                            if(permisos()) {
+                                sacarUnaFoto();
+                            } else {
+                                ActivityCompat.requestPermissions(Principal.this, PERMISSION_REQUIRED, REQUEST_PERMISSION);
+                            }
                         }else{
                             dialogInterface.dismiss();
                         }
@@ -140,13 +197,123 @@ public class Principal extends AppCompatActivity {
 
     }
 
+    private void obtenerImagenDeLaGaleria() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/");
+        startActivityForResult(intent.createChooser(intent,"Seleccione la Aplicación"), CARGAR_FOTO);
+    }
+
+    private void sacarUnaFoto() {
+        Intent i = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (i.resolveActivity(getPackageManager()) != null){
+            File fileFoto = null;
+
+            try{
+                fileFoto = crearAchivoDeImagen();
+            } catch (IOException e) { }
+
+            if (fileFoto != null) {
+                /*
+                Se le pasa la ruta a la aplicacion para sacar foto, con el fin de guardar la foto
+                en esa ruta.
+                 */
+                Uri fotoURI = FileProvider.getUriForFile(Principal.this,"com.jcortiz.chatconversa.fileprovider",fileFoto);
+                i.putExtra(MediaStore.EXTRA_OUTPUT, fotoURI);
+                startActivityForResult(i, TOMAR_FOTO);
+            }
+        }
+    }
+
+    private File crearAchivoDeImagen() throws IOException {
+        //Primero se crea un nombre de archivo de imagen
+        String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String nombreImagen = "respaldo_" + fecha + "_";
+        File directorio = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imagen = File.createTempFile(nombreImagen, ".jpg", directorio);
+
+        imagePath = imagen.getAbsolutePath();
+        return imagen;
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==RESULT_OK){
-            Uri raiz = data.getData();
-            imagenHeader.setImageURI(raiz);
+
+
+
+            try {
+                /*
+                Si se quiere buscar una foto en la galeria, entonces entrara en este if,
+                si se quiere tomar una foto, entonces no entrara a este if, ya que en el caso de
+                tomar una foto, ya se guardo la ruta de la foto en la variable image
+                 */
+                if (data.getData() != null){
+                    Uri dirImagen = data.getData();
+                    imagePath = dirImagen.getPath();
+                    Toast.makeText(Principal.this, "Aún no se implementa subir foto", Toast.LENGTH_SHORT).show();
+                }
+
+            } catch (Exception e) { e.printStackTrace(); }
+
+
+            fotoConCalidad();
+
+
+//            final Call<OkRequestWS> resp = servicio.cargarImagenDeUsario(token,idUser, username, image);
+//            resp.enqueue(new Callback<OkRequestWS>() {
+//                @Override
+//                public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
+//                    if(response.isSuccessful()){
+//                        Uri direccion = Uri.parse(image);
+//                        imagenHeader.setImageURI(direccion);
+//                        Toast.makeText(Principal.this,response.body().getMessage(), Toast.LENGTH_SHORT).show();
+//                    } else if (!response.isSuccessful()) {
+//                        Gson gson = new Gson();
+//                        BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
+//                        if(mensajeDeError.getMessage() != null){
+//                            Toast.makeText(Principal.this,mensajeDeError.getMessage(), Toast.LENGTH_SHORT).show();
+//                        }
+//                        if(mensajeDeError.getErrors() != null){
+//                            if(mensajeDeError.getErrors().getUsername() != null){
+//                                Log.d("Retrofit","Error username: "+mensajeDeError.getErrors().getUsername());
+//                            }
+//                            if(mensajeDeError.getErrors().getUserId() != null) {
+//                                Log.d("Retrofit", "Error userId: "+mensajeDeError.getErrors().getUserId());
+//                            }
+//                            if(mensajeDeError.getErrors().getUserImage() != null) {
+//                                Log.d("Retrofit", "Error imagen: "+mensajeDeError.getErrors().getUserImage());
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<OkRequestWS> call, Throwable t) {
+//
+//                }
+//            });
         }
+    }
+
+    private void fotoConCalidad() {
+        int targetW = imagenHeader.getWidth();
+        int targetH = imagenHeader.getHeight();
+
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        int scale = (int) targetW/targetH;
+
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scale;
+        bmOptions.inPurgeable = true;
+
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+        imagenHeader.setImageBitmap(bitmap);
+
     }
 
     private void inflarComponentes() {
@@ -158,7 +325,7 @@ public class Principal extends AppCompatActivity {
         username = preferencias.getString("user","errorUser");
         run = preferencias.getString("run","errorRun");
         email = preferencias.getString("email","errorEmail");
-        image = preferencias.getString("image","errorImage");
+        imagePath = preferencias.getString("image","errorImage");
         thumbnail = preferencias.getString("thumbnail","errorThumbnail");
 
         textoCorreoHeader = header.findViewById(R.id.textEmailHeader);
