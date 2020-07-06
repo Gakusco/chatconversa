@@ -27,6 +27,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.WebService;
 import com.jcortiz.chatconversa.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
@@ -110,7 +111,6 @@ public class Principal extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        inyecionDependenciaRetrofit();
         inflarComponentes();
         modificarHeader();
     }
@@ -137,15 +137,9 @@ public class Principal extends AppCompatActivity {
         textoNombreHeader = header.findViewById(R.id.textNombreHeader);
         imagenHeader = header.findViewById(R.id.imagenUsuarioHeader);
 
-        builder = new AlertDialog.Builder(this);
-    }
+        servicio = WSClient.getInstance().getWebService();
 
-    private void inyecionDependenciaRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/user/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        servicio = retrofit.create(WebService.class);
+        builder = new AlertDialog.Builder(this);
     }
 
     @Override

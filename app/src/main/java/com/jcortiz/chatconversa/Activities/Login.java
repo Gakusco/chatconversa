@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.WebService;
 import com.jcortiz.chatconversa.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
@@ -62,7 +63,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         inflarVariables();
         uuid(this);
         revisarPreferencias();
-        inyecionDependenciaRetrofit();
         manejoErroresInput();
         clicEnUnBoton();
 
@@ -141,6 +141,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         preferencias = getSharedPreferences(PREF_KEY,MODE_PRIVATE);
         edit = preferencias.edit();
+
+        servicio = WSClient.getInstance().getWebService();
     }
 
 
@@ -201,14 +203,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 startActivity(i);
                 break;
         }
-    }
-
-    private void inyecionDependenciaRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/user/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        servicio = retrofit.create(WebService.class);
     }
 
     public synchronized static String uuid(Context context){

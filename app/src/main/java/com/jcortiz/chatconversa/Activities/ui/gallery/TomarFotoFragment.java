@@ -32,6 +32,7 @@ import com.google.gson.Gson;
 import com.jcortiz.chatconversa.Activities.Login;
 import com.jcortiz.chatconversa.Activities.Principal;
 import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.WebService;
 import com.jcortiz.chatconversa.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
@@ -91,8 +92,8 @@ public class TomarFotoFragment extends Fragment {
         fotoImageView = root.findViewById(R.id.fotoImageView);
         tomarFotoBtn = root.findViewById(R.id.tomarFotoBtn);
         guardarFoto = root.findViewById(R.id.guardarFotoBtn);
+        servicio = WSClient.getInstance().getWebService();
 
-        inyecionDependenciaRetrofit();
         obtenerPreferencias();
         obtenerFoto();
         return root;
@@ -230,14 +231,6 @@ public class TomarFotoFragment extends Fragment {
             fotoConCalidad();
 
         }
-    }
-
-    private void inyecionDependenciaRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/user/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        servicio = retrofit.create(WebService.class);
     }
 
     private void fotoConCalidad() {

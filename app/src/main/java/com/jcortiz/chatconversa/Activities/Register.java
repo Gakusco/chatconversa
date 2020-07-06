@@ -17,6 +17,7 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.R;
+import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.WebService;
 import com.jcortiz.chatconversa.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
@@ -68,9 +69,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         inflarComponentes();
         manejodeDeErroresInputs();
 
-
-
-        inyecionDependenciaRetrofit();
         btnRegistrar.setOnClickListener(this);
     }
 
@@ -251,13 +249,6 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    private void inyecionDependenciaRetrofit() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/user/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        servicio = retrofit.create(WebService.class);
-    }
 
     private void inflarComponentes() {
         name = findViewById(R.id.inputNombre);
@@ -279,6 +270,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
         layoutTokenEmprise = findViewById(R.id.layoutTokenEmpresa);
 
         btnRegistrar = findViewById(R.id.btnRegistrar);
+
+        servicio = WSClient.getInstance().getWebService();
 
         textoError = findViewById(R.id.mensajeDeErrorRegistro);
     }
