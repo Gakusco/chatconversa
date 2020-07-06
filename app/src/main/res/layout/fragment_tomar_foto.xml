@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Activities.ui.gallery.GalleryFragment">
+    android:layout_margin="20px"
+    tools:context=".Activities.ui.gallery.TomarFotoFragment">
 
     <ImageView
         android:id="@+id/fotoImageView"

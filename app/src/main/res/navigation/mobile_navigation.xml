@@ -30,10 +30,10 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.jcortiz.chatconversa.Activities.ui.gallery.GalleryFragment"
+        android:id="@+id/nav_tomar_foto"
+        android:name="com.jcortiz.chatconversa.Activities.ui.gallery.TomarFotoFragment"
         android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        tools:layout="@layout/fragment_tomar_foto" />
 
     <fragment
         android:id="@+id/nav_slideshow"
