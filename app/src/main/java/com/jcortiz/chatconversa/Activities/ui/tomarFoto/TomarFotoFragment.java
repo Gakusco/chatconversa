@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities.ui.gallery;
+package com.jcortiz.chatconversa.Activities.ui.tomarFoto;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -31,11 +33,13 @@ import androidx.lifecycle.ViewModelProviders;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.Activities.Login;
 import com.jcortiz.chatconversa.Activities.Principal;
+import com.jcortiz.chatconversa.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
-import com.jcortiz.chatconversa.WebService;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.Retrofit.WebService;
+import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.IOException;
@@ -48,8 +52,6 @@ import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TomarFotoFragment extends Fragment {
 
@@ -58,6 +60,8 @@ public class TomarFotoFragment extends Fragment {
     private Button tomarFotoBtn;
     private Button guardarFoto;
     private ImageView fotoImageView;
+    private TextView textExitoso;
+    private ProgressBar progressBar;
 
     private static WebService servicio;
     private SharedPreferences preferencias;
@@ -89,14 +93,26 @@ public class TomarFotoFragment extends Fragment {
             }
         });
 
+        inflarComponentes(root);
+        obtenerPreferencias();
+        mostrarFotoActual();
+        obtenerFoto();
+        return root;
+    }
+
+    private void inflarComponentes(View root) {
         fotoImageView = root.findViewById(R.id.fotoImageView);
         tomarFotoBtn = root.findViewById(R.id.tomarFotoBtn);
         guardarFoto = root.findViewById(R.id.guardarFotoBtn);
+        textExitoso = root.findViewById(R.id.textoExitoso);
+        progressBar = root.findViewById(R.id.progressBar);
         servicio = WSClient.getInstance().getWebService();
+    }
 
-        obtenerPreferencias();
-        obtenerFoto();
-        return root;
+    private void mostrarFotoActual() {
+        if(imagenUser != Constantes.ERROR_IMAGE) {
+            Picasso.get().load(imagenUser).into(fotoImageView);
+        }
     }
 
     private boolean permisos() {
@@ -126,6 +142,9 @@ public class TomarFotoFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(imagePath != null){
+                    tomarFotoBtn.setVisibility(View.GONE);
+                    guardarFoto.setVisibility(View.INVISIBLE);
+                    progressBar.setVisibility(View.VISIBLE);
                     subirFoto();
                 } else {
                     Toast.makeText(getContext(), "Debe tomar una foto", Toast.LENGTH_SHORT).show();
@@ -159,27 +178,17 @@ public class TomarFotoFragment extends Fragment {
             @Override
             public void onResponse(Call<OkRequestWS> call, Response<OkRequestWS> response) {
                 if(response.isSuccessful()){
-                    imagenUser = preferencias.getString("imagen",response.body().getUser().getImage());
-                    thumbnail = preferencias.getString("thumbnail",response.body().getUser().getThumbnail());
-                    Log.d("Retrofit","La imagen es: "+imagenUser);
-                    Log.d("Retrofit","El thumbnail es: "+thumbnail);
+                    guardarImagenEnPreferencias(response.body());
+
+                    progressBar.setVisibility(View.GONE);
+                    textExitoso.setVisibility(View.VISIBLE);
+
+                    ((Principal)getActivity()).inflarComponentes();
+                    ((Principal)getActivity()).modificarHeader();
                 } else if (!response.isSuccessful()) {
                     Gson gson = new Gson();
                     BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                    if(mensajeDeError.getMessage() != null){
-                        Toast.makeText(getActivity(),mensajeDeError.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                    if(mensajeDeError.getErrors() != null){
-                        if(mensajeDeError.getErrors().getUsername() != null){
-                            Log.d("Retrofit","Error username: "+mensajeDeError.getErrors().getUsername());
-                        }
-                        if(mensajeDeError.getErrors().getUserId() != null) {
-                            Log.d("Retrofit", "Error userId: "+mensajeDeError.getErrors().getUserId());
-                        }
-                        if(mensajeDeError.getErrors().getUserImage() != null) {
-                            Log.d("Retrofit", "Error imagen: "+mensajeDeError.getErrors().getUserImage());
-                        }
-                    }
+                    respuestaDeError(mensajeDeError);
                 }
             }
 
@@ -188,6 +197,30 @@ public class TomarFotoFragment extends Fragment {
                 Log.d("ERROR","msg: "+t.getMessage());
             }
         });
+    }
+
+    private void guardarImagenEnPreferencias(OkRequestWS body) {
+        SharedPreferences.Editor editor = preferencias.edit();
+        editor.putString(Constantes.IMAGE,body.getUser().getImage());
+        editor.putString(Constantes.THUMBNAIL,body.getUser().getThumbnail());
+        editor.commit();
+    }
+
+    private void respuestaDeError(BadRequest mensajeDeError) {
+        if(mensajeDeError.getMessage() != null){
+            Toast.makeText(getActivity(),mensajeDeError.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+        if(mensajeDeError.getErrors() != null){
+            if(mensajeDeError.getErrors().getUsername() != null){
+                Log.d("Retrofit","Error username: "+mensajeDeError.getErrors().getUsername());
+            }
+            if(mensajeDeError.getErrors().getUserId() != null) {
+                Log.d("Retrofit", "Error userId: "+mensajeDeError.getErrors().getUserId());
+            }
+            if(mensajeDeError.getErrors().getUserImage() != null) {
+                Log.d("Retrofit", "Error imagen: "+mensajeDeError.getErrors().getUserImage());
+            }
+        }
     }
 
     private void sacarUnaFoto() {
@@ -227,9 +260,7 @@ public class TomarFotoFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode==Principal.RESULT_OK){
-
             fotoConCalidad();
-
         }
     }
 
@@ -254,10 +285,10 @@ public class TomarFotoFragment extends Fragment {
 
     private void obtenerPreferencias() {
         preferencias = getActivity().getSharedPreferences(Login.PREF_KEY,Principal.MODE_PRIVATE);
-        token = "Bearer "+preferencias.getString("token","errorToken");
-        idUser = preferencias.getString("userId","errorId");
-        username = preferencias.getString("user","errorUser");
-        //imagePath = preferencias.getString("image","errorImage");
-        //thumbnail = preferencias.getString("thumbnail","errorThumbnail");
+        token = "Bearer "+preferencias.getString(Constantes.TOKEN,Constantes.ERROR_TOKEN);
+        idUser = preferencias.getString(Constantes.USER_ID,Constantes.ERROR_USER_ID);
+        username = preferencias.getString(Constantes.USER,Constantes.ERROR_USER);
+        imagenUser = preferencias.getString(Constantes.IMAGE,Constantes.ERROR_IMAGE);
+        thumbnail = preferencias.getString(Constantes.THUMBNAIL,Constantes.ERROR_THUMBNAIL);
     }
 }

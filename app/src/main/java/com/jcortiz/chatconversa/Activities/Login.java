@@ -16,11 +16,12 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
+import com.jcortiz.chatconversa.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
-import com.jcortiz.chatconversa.WebService;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.Retrofit.WebService;
+import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 import com.jcortiz.chatconversa.splashes.splashLogin;
 
 import java.util.UUID;
@@ -29,8 +30,6 @@ import java.util.regex.Pattern;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -157,17 +156,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         if(response != null && response.body() != null){
                             Log.d("Retrofit",response.body().getUser().getId().toString());
                             mostrarMessageError.setVisibility(View.INVISIBLE);
-                            edit.putString("user",inputUserLogin.getText().toString());
-                            edit.putString("password",inputContraLogin.getText().toString());
-                            edit.putString("userId",response.body().getUser().getId().toString());
-                            edit.putString("token",response.body().getToken());
-                            edit.putString("name",response.body().getUser().getName());
-                            edit.putString("lastName",response.body().getUser().getLastName());
-                            edit.putString("run",response.body().getUser().getRun());
-                            edit.putString("email",response.body().getUser().getEmail());
-                            edit.putString("image",response.body().getUser().getImage());
-                            edit.putString("thumbnail",response.body().getUser().getThumbnail());
-                            edit.commit();
+                            guardarDatosDeUsuario(response.body());
+
                             Intent i = new Intent(Login.this, splashLogin.class);
                             startActivity(i);
                             finish();
@@ -175,20 +165,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                         }else if(!response.isSuccessful()){
                             Gson gson = new Gson();
                             BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                            if(mensajeDeError.getMessage() != null){
-                                mostrarMessageError.setVisibility(View.VISIBLE);
-                                mostrarMessageError.setText(mensajeDeError.getMessage());
-                            }
-                            if(mensajeDeError.getErrors() != null){
-                                if(mensajeDeError.getErrors().getUsername() != null){
-                                    String userError = mensajeDeError.getErrors().getUsername().toString();
-                                    layoutUserLogin.setError(userError.substring(1,userError.length()-1));
-                                }
-                                if(mensajeDeError.getErrors().getPassword() != null){
-                                    String passwordError = mensajeDeError.getErrors().getPassword().toString();
-                                    layoutContraLogin.setError(passwordError.substring(1,passwordError.length()-1));
-                                }
-                            }
+
+                            respuestaDeError(mensajeDeError);
+
                         }
                     }
 
@@ -203,6 +182,37 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 startActivity(i);
                 break;
         }
+    }
+
+    private void respuestaDeError(BadRequest mensajeDeError) {
+        if(mensajeDeError.getMessage() != null){
+            mostrarMessageError.setVisibility(View.VISIBLE);
+            mostrarMessageError.setText(mensajeDeError.getMessage());
+        }
+        if(mensajeDeError.getErrors() != null){
+            if(mensajeDeError.getErrors().getUsername() != null){
+                String userError = mensajeDeError.getErrors().getUsername().toString();
+                layoutUserLogin.setError(userError.substring(1,userError.length()-1));
+            }
+            if(mensajeDeError.getErrors().getPassword() != null){
+                String passwordError = mensajeDeError.getErrors().getPassword().toString();
+                layoutContraLogin.setError(passwordError.substring(1,passwordError.length()-1));
+            }
+        }
+    }
+
+    private void guardarDatosDeUsuario(OkRequestWS body) {
+        edit.putString(Constantes.USER,inputUserLogin.getText().toString());
+        edit.putString(Constantes.PASSWORD,inputContraLogin.getText().toString());
+        edit.putString(Constantes.USER_ID,body.getUser().getId().toString());
+        edit.putString(Constantes.TOKEN,body.getToken());
+        edit.putString(Constantes.NAME,body.getUser().getName());
+        edit.putString(Constantes.LAST_NAME,body.getUser().getLastName());
+        edit.putString(Constantes.RUN,body.getUser().getRun());
+        edit.putString(Constantes.EMAIL,body.getUser().getEmail());
+        edit.putString(Constantes.IMAGE,body.getUser().getImage());
+        edit.putString(Constantes.THUMBNAIL,body.getUser().getThumbnail());
+        edit.commit();
     }
 
     public synchronized static String uuid(Context context){

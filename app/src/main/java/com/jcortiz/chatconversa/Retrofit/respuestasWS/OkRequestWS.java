@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.respuestasWS;
+package com.jcortiz.chatconversa.Retrofit.respuestasWS;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

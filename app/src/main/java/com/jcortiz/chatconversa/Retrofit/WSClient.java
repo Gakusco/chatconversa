@@ -1,7 +1,5 @@
 package com.jcortiz.chatconversa.Retrofit;
 
-import com.jcortiz.chatconversa.WebService;
-
 import retrofit2.converter.gson.GsonConverterFactory;
 
 

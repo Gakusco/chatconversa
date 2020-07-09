@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities.ui.gallery;
+package com.jcortiz.chatconversa.Activities.ui.tomarFoto;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;

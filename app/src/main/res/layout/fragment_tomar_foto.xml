@@ -6,13 +6,35 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20px"
-    tools:context=".Activities.ui.gallery.TomarFotoFragment">
+    tools:context=".Activities.ui.tomarFoto.TomarFotoFragment">
 
     <ImageView
         android:id="@+id/fotoImageView"
+        android:src="@drawable/ic_user_1633249"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"></ImageView>
+
+    <TextView
+        android:id="@+id/textoExitoso"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"></ImageView>
+        android:padding="15dp"
+        android:layout_gravity="center"
+        android:textColor="#197500"
+        android:background="#AD1EFF16"
+        android:textSize="25dp"
+        android:visibility="gone"
+        android:text="Foto guardada con éxito"></TextView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_gravity="center"></ProgressBar>
+
     <Button
         android:id="@+id/tomarFotoBtn"
         android:layout_width="match_parent"

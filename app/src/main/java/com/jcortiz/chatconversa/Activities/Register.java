@@ -18,9 +18,9 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
-import com.jcortiz.chatconversa.WebService;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.Retrofit.WebService;
+import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 import com.jcortiz.chatconversa.splashes.splashRegistroExitoso;
 
 import java.util.regex.Pattern;
@@ -28,8 +28,6 @@ import java.util.regex.Pattern;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Register extends AppCompatActivity implements View.OnClickListener {
 
@@ -284,10 +282,8 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
 
     @Override
     public void onClick(View view) {
-        if(confirmPassword.getText().toString().isEmpty()){
-            layoutConfirmPassword.setError("Campo obligatorio");
-            return;
-        }
+        obligatorioConfirmPassword();
+
         final Call<OkRequestWS> resp = servicio.register(
                 name.getText().toString(),
                 lastName.getText().toString(),
@@ -309,48 +305,7 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 }else if(!response.isSuccessful()) {
                     Gson gson = new Gson();
                     BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                    Toast.makeText(Register.this,"Revise los campos",Toast.LENGTH_SHORT).show();
-                    if(mensajeDeError.getMessage() != null){
-                        textoError.setVisibility(View.VISIBLE);
-                        textoError.setText(mensajeDeError.getMessage());
-                    }
-                    if(mensajeDeError.getErrors() != null){
-                        if(mensajeDeError.getErrors().getName() != null){
-                            String nameError = mensajeDeError.getErrors().getName().toString();
-                            layoutName.setError(nameError.substring(1,nameError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getLastname() != null){
-                            String lastNameError = mensajeDeError.getErrors().getLastname().toString();
-                            layoutLastName.setError(lastNameError.substring(1,lastNameError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getRun() != null){
-                            String runError = mensajeDeError.getErrors().getRun().toString();
-                            layoutRun.setError(runError.substring(1,runError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getUsername() != null){
-                            String userError = mensajeDeError.getErrors().getUsername().toString();
-                            layoutUsername.setError(userError.substring(1,userError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getEmail() != null){
-                            String emailError = mensajeDeError.getErrors().getEmail().toString();
-                            layoutEmail.setError(emailError.substring(1,emailError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getPassword() != null){
-                            String passwordError = mensajeDeError.getErrors().getPassword().toString();
-                            layoutPassword.setError(passwordError.substring(1,passwordError.length()-1));
-                        }
-
-                        if(mensajeDeError.getErrors().getTokenEnterprise() != null){
-                            String tokenError = mensajeDeError.getErrors().getTokenEnterprise().toString();
-                            layoutTokenEmprise.setError(tokenError.substring(1,tokenError.length()-1));
-                        }
-                    }
-
+                    respuestaDeError(mensajeDeError);
                 }
             }
 
@@ -359,5 +314,56 @@ public class Register extends AppCompatActivity implements View.OnClickListener 
                 Log.d("Retrofit","Error "+t.getMessage());
             }
         });
+    }
+
+    private void obligatorioConfirmPassword() {
+        if(confirmPassword.getText().toString().isEmpty()){
+            layoutConfirmPassword.setError("Campo obligatorio");
+            return;
+        }
+    }
+
+    private void respuestaDeError (BadRequest mensajeDeError) {
+        Toast.makeText(Register.this,"Revise los campos",Toast.LENGTH_SHORT).show();
+        if(mensajeDeError.getMessage() != null){
+            textoError.setVisibility(View.VISIBLE);
+            textoError.setText(mensajeDeError.getMessage());
+        }
+        if(mensajeDeError.getErrors() != null){
+            if(mensajeDeError.getErrors().getName() != null){
+                String nameError = mensajeDeError.getErrors().getName().toString();
+                layoutName.setError(nameError.substring(1,nameError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getLastname() != null){
+                String lastNameError = mensajeDeError.getErrors().getLastname().toString();
+                layoutLastName.setError(lastNameError.substring(1,lastNameError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getRun() != null){
+                String runError = mensajeDeError.getErrors().getRun().toString();
+                layoutRun.setError(runError.substring(1,runError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getUsername() != null){
+                String userError = mensajeDeError.getErrors().getUsername().toString();
+                layoutUsername.setError(userError.substring(1,userError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getEmail() != null){
+                String emailError = mensajeDeError.getErrors().getEmail().toString();
+                layoutEmail.setError(emailError.substring(1,emailError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getPassword() != null){
+                String passwordError = mensajeDeError.getErrors().getPassword().toString();
+                layoutPassword.setError(passwordError.substring(1,passwordError.length()-1));
+            }
+
+            if(mensajeDeError.getErrors().getTokenEnterprise() != null){
+                String tokenError = mensajeDeError.getErrors().getTokenEnterprise().toString();
+                layoutTokenEmprise.setError(tokenError.substring(1,tokenError.length()-1));
+            }
+        }
     }
 }

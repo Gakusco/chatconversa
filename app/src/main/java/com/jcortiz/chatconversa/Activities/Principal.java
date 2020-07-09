@@ -1,42 +1,31 @@
 package com.jcortiz.chatconversa.Activities;
 
-import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
+import com.jcortiz.chatconversa.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
-import com.jcortiz.chatconversa.WebService;
-import com.jcortiz.chatconversa.clasesDeError.BadRequest;
-import com.jcortiz.chatconversa.respuestasWS.OkRequestWS;
+import com.jcortiz.chatconversa.Retrofit.WebService;
+import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 import com.jcortiz.chatconversa.splashes.splashLogout;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -45,16 +34,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
+import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class Principal extends AppCompatActivity {
 
@@ -69,16 +52,18 @@ public class Principal extends AppCompatActivity {
     private String run;
     private String email;
     private String thumbnail;
+    private String imagenUser;
 
     //Header
     private View header;
 
     private TextView textoNombreHeader;
     private TextView textoCorreoHeader;
-    private ImageButton imagenHeader;
+    private ImageView imagenHeader;
 
     private AppBarConfiguration mAppBarConfiguration;
     private AlertDialog.Builder builder;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,50 +73,56 @@ public class Principal extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+//        FloatingActionButton fab = findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
+//            }
+//        });
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
 
         header = navigationView.getHeaderView(0);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_tomar_foto, R.id.nav_slideshow)
+                R.id.nav_inicio, R.id.nav_tomar_foto, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
+
         inflarComponentes();
         modificarHeader();
     }
 
-    private void modificarHeader() {
+    public void modificarHeader() {
         textoNombreHeader.setText(name+" "+lastName);
         textoCorreoHeader.setText(email);
+        Log.d("Retrofit","La imagen es: "+imagenUser);
+        if(imagenUser != Constantes.ERROR_IMAGE) {
+            Picasso.get().load(imagenUser).transform(new CropCircleTransformation()).into(imagenHeader);
+        }
     }
 
 
-    private void inflarComponentes() {
+    public void inflarComponentes() {
         preferencias = getSharedPreferences(Login.PREF_KEY,MODE_PRIVATE);
-        token = "Bearer "+preferencias.getString("token","errorToken");
-        idUser = preferencias.getString("userId","errorId");
-        name = preferencias.getString("name","errorName");
-        lastName = preferencias.getString("lastName","errorLastname");
-        username = preferencias.getString("user","errorUser");
-        run = preferencias.getString("run","errorRun");
-        email = preferencias.getString("email","errorEmail");
-        //imagePath = preferencias.getString("image","errorImage");
-        thumbnail = preferencias.getString("thumbnail","errorThumbnail");
+        token = "Bearer "+preferencias.getString(Constantes.TOKEN,Constantes.ERROR_TOKEN);
+        idUser = preferencias.getString(Constantes.USER_ID,Constantes.ERROR_USER_ID);
+        name = preferencias.getString(Constantes.NAME,Constantes.ERROR_NAME);
+        lastName = preferencias.getString(Constantes.LAST_NAME,Constantes.ERROR_LAST_NAME);
+        username = preferencias.getString(Constantes.USER,Constantes.ERROR_USER);
+        run = preferencias.getString(Constantes.RUN,Constantes.ERROR_RUN);
+        email = preferencias.getString(Constantes.EMAIL,Constantes.ERROR_EMAIL);
+        imagenUser = preferencias.getString(Constantes.IMAGE,Constantes.ERROR_IMAGE);
+        thumbnail = preferencias.getString(Constantes.THUMBNAIL,Constantes.ERROR_THUMBNAIL);
 
         textoCorreoHeader = header.findViewById(R.id.textEmailHeader);
         textoNombreHeader = header.findViewById(R.id.textNombreHeader);
