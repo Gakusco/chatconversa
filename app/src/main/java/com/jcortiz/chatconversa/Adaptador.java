@@ -25,7 +25,6 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
     private ArrayList<DataMensaje> modelo;
     private LayoutInflater inflater;
     private View.OnClickListener listener;
-    private SharedPreferences preferencias;
 
     public Adaptador(Context context, ArrayList<DataMensaje> modelo) {
         this.inflater = LayoutInflater.from(context);
@@ -45,12 +44,14 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
         String cuerpo = modelo.get(position).getMessage();
         String hora = modelo.get(position).getDate();
         String nombre = modelo.get(position).getUser().getUsername();
-        //String foto = modelo.get(position).getFoto();
+        String foto = modelo.get(position).getUser().getUserImage();
         holder.nombreMensaje.setText(nombre);
         holder.horaMensaje.setText(hora);
         holder.cuerpoMensaje.setText(cuerpo);
 
-        //Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
+        if(!foto.isEmpty() && foto!=null){
+            Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
+        }
     }
 
 
@@ -81,7 +82,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
             nombreMensaje = itemView.findViewById(R.id.textNombreUsuario);
             cuerpoMensaje = itemView.findViewById(R.id.textMensaje);
             horaMensaje = itemView.findViewById(R.id.textHoraDelMensaje);
-            fotoMensaje = itemView.findViewById(R.id.fotoImageView);
+            fotoMensaje = itemView.findViewById(R.id.imgPerfilChat);
         }
     }
 }
