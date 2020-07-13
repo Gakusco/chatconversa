@@ -1,5 +1,6 @@
 package com.jcortiz.chatconversa.Retrofit;
 
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 
 import okhttp3.MultipartBody;
@@ -15,7 +16,7 @@ import retrofit2.http.Part;
 public interface WebService {
 
     @FormUrlEncoded
-    @POST("create")
+    @POST("user/create")
     Call<OkRequestWS> register(
             @Field("name") String nombre,
             @Field("lastname") String apellido,
@@ -27,7 +28,7 @@ public interface WebService {
     );
 
     @FormUrlEncoded
-    @POST("login")
+    @POST("user/login")
     Call<OkRequestWS> login(
             @Field("username") String nombre,
             @Field("password") String password,
@@ -35,7 +36,7 @@ public interface WebService {
     );
 
     @FormUrlEncoded
-    @POST("logout")
+    @POST("user/logout")
     Call<OkRequestWS> logout(
             @Header("Authorization") String token,
             @Field("user_id") String userId,
@@ -43,13 +44,19 @@ public interface WebService {
     );
 
     @Multipart
-    @POST("load/image")
+    @POST("user/load/image")
     Call<OkRequestWS> cargarImagenDeUsario(
             @Header("Authorization") String token,
             @Part MultipartBody.Part file,
-            //@Part("user_image") RequestBody nombre,
             @Part("user_id") RequestBody userId,
             @Part("username") RequestBody username
     );
 
+    @FormUrlEncoded
+    @POST("message/get")
+    Call<MensajeWS> obtenerMensajes(
+            @Header("Authorization") String token,
+            @Field("user_id") String userId,
+            @Field("username") String username
+    );
 }

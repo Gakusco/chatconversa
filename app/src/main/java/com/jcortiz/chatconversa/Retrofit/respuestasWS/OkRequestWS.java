@@ -9,6 +9,8 @@ public class OkRequestWS {
     @SerializedName("status_code")
     @Expose
     private int code;
+    @SerializedName("message")
+    @Expose
     private String message;
     @SerializedName("token")
     @Expose

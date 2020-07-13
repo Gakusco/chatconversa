@@ -253,6 +253,7 @@ public class TomarFotoFragment extends Fragment {
         File imagen = File.createTempFile(nombreImagen, ".jpg", directorio);
 
         imagePath = imagen.getAbsolutePath();
+        Log.d("Retrofit",imagePath);
         return imagen;
     }
 

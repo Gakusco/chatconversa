@@ -11,7 +11,7 @@ public class WSClient {
 
     private WSClient() {
         retrofit = new retrofit2.Retrofit.Builder()
-                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/user/")
+                .baseUrl("http://chat-conversa.unnamed-chile.com/ws/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         servicio = retrofit.create(WebService.class);
