@@ -1,5 +1,6 @@
 package com.jcortiz.chatconversa.Retrofit;
 
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 
@@ -58,5 +59,17 @@ public interface WebService {
             @Header("Authorization") String token,
             @Field("user_id") String userId,
             @Field("username") String username
+    );
+
+    @Multipart
+    @POST("message/send")
+    Call<EnviarMensajeWS> enviarMensaje(
+            @Header("Authorization") String token,
+            @Part MultipartBody.Part file,
+            @Part("user_id") RequestBody userId,
+            @Part("username") RequestBody username,
+            @Part("message") RequestBody message,
+            @Part("latitude") RequestBody latitude,
+            @Part("longitude") RequestBody longitude
     );
 }

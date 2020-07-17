@@ -9,6 +9,8 @@ public class WSClient {
     private WebService servicio;
     private retrofit2.Retrofit retrofit;
 
+
+
     private WSClient() {
         retrofit = new retrofit2.Retrofit.Builder()
                 .baseUrl("http://chat-conversa.unnamed-chile.com/ws/")

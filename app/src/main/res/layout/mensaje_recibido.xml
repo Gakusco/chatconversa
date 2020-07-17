@@ -21,7 +21,6 @@
             android:id="@+id/contenedorMensaje"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:maxWidth="200dp"
             android:background="@color/colorAccent"
             android:layout_toRightOf="@id/imgPerfilChat"
             android:layout_centerVertical="true"
@@ -34,20 +33,33 @@
                 android:text="Juan Carlos"
                 android:textStyle="bold"
                 ></TextView>
-            <TextView
-                android:id="@+id/textMensaje"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/cuerpoDelMensaje"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxWidth="200dp"
-                android:layout_below="@id/textNombreUsuario"
-                android:text="Hola, bienvenidooooooooooooooooooooooooooooooooooooooooooooo, esto es un experimento que esto realizando"></TextView>
+                android:orientation="vertical"
+                android:layout_below="@id/textNombreUsuario">
+                <TextView
+                    android:id="@+id/textMensaje"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxWidth="200dp"
+                    android:text="Hola, bienvenidooooooooooooooooooooooooooooooooooooooooooooo, esto es un experimento que esto realizando"></TextView>
+                <ImageView
+                    android:id="@+id/imagenDeChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:layout_below="@id/textNombreUsuario"></ImageView>
+            </LinearLayout>
+
 
             <TextView
                 android:id="@+id/textHoraDelMensaje"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/textMensaje"
-                android:layout_below="@id/textMensaje"
+                android:layout_alignEnd="@id/cuerpoDelMensaje"
+                android:layout_below="@id/cuerpoDelMensaje"
                 android:textStyle="bold"
                 android:text="17:24 PM"></TextView>
         </RelativeLayout>

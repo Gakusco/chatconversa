@@ -25,12 +25,14 @@
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/editTextContenidoMensaje"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 />
 
         </com.google.android.material.textfield.TextInputLayout>
         <Button
+            android:id="@+id/btnEnviarMensaje"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="18"

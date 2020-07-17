@@ -6,31 +6,36 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 import com.jcortiz.chatconversa.Activities.Login;
 import com.jcortiz.chatconversa.Activities.Principal;
 import com.jcortiz.chatconversa.Adaptador;
 import com.jcortiz.chatconversa.Constantes;
-import com.jcortiz.chatconversa.Mensaje;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;
+import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
-import com.jcortiz.chatconversa.Retrofit.respuestasWS.OkRequestWS;
 
+import java.io.File;
 import java.util.ArrayList;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -39,11 +44,13 @@ public class InicioFragment extends Fragment {
 
     private Adaptador adaptador;
     private RecyclerView listaDeMensajes;
-    //private ArrayList<Mensaje> mensajes;
 
     private String user_id;
     private String username;
     private String token;
+
+    private Button btnEnviarMensaje;
+    private TextInputEditText editTextContenidoMensaje;
 
     private ArrayList<DataMensaje> mensajes;
 
@@ -51,52 +58,72 @@ public class InicioFragment extends Fragment {
 
     private WebService servicio;
 
-    private InicioViewModel homeViewModel;
+    private InicioViewModel inicioViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
+
+        inicioViewModel =
                 ViewModelProviders.of(this).get(InicioViewModel.class);
         View root = inflater.inflate(R.layout.fragment_inicio, container, false);
-
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-
-            }
-        });
-
         inflarComponentes(root);
-        obtenerServicio();
-        obtenerDatos();
+
+        actualizarLista();
+        enviarMensaje();
         return root;
     }
 
-    private void obtenerDatos() {
-        final Call<MensajeWS> resp = servicio.obtenerMensajes(token, user_id, username);
+    private void actualizarLista() {
+        inicioViewModel.getDataMensaje(token, user_id, username).observe(getViewLifecycleOwner(), chatResponse -> {
+            mensajes = chatResponse;
+            desplegarLista();
+        });
 
-        resp.enqueue(new Callback<MensajeWS>() {
-            @Override
-            public void onResponse(Call<MensajeWS> call, Response<MensajeWS> response) {
-                if(response.isSuccessful()) {
-                    Log.d("Retrofit","Respuesta correcta: "+response.body().toString());
-                    obtenerDatos();
-                    agregarDatosALista(response.body().getData());
-                    desplegarLista();
-                } else if (!response.isSuccessful()) {
-                    Log.d("Retrofit","Respuesta incorrecta: "+response.errorBody().toString());
-                }
-            }
+    }
 
+    private void enviarMensaje() {
+        btnEnviarMensaje.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onFailure(Call<MensajeWS> call, Throwable t) {
-                Log.d("Retrofit", "Mensaje de error: "+t.getMessage());
+            public void onClick (View view) {
+                RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
+                RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
+                RequestBody message = RequestBody.create(MediaType.parse("text/plain"),editTextContenidoMensaje.getText().toString());
+                RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
+                RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
+
+                File archivoImg = new File("");
+                RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
+                MultipartBody.Part archivo = MultipartBody.Part.createFormData("user_image",archivoImg.getName(),img);
+                final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,null,id,user,message,null,null);
+                resp.enqueue(new Callback<EnviarMensajeWS>() {
+                    @Override
+                    public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
+                        if (response.isSuccessful()) {
+                            Log.d("Retrofit","Mensaje enviado con exito: "+response.body().toString());
+                            editTextContenidoMensaje.setText("");
+                            actualizarLista();
+                        } else if (!response.isSuccessful()) {
+                            Gson gson = new Gson();
+                            BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
+                            Log.d("Retrofit",mensajeDeError.getErrors().toString());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<EnviarMensajeWS> call, Throwable t) {
+                        Log.d("Retrofit","Error al enviar mensaje: "+t.getMessage());
+                    }
+                });
             }
         });
     }
 
     private void desplegarLista() {
-        listaDeMensajes.setLayoutManager(new LinearLayoutManager(getContext()));
+        // Invierte el orden de la lista
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        linearLayoutManager.setReverseLayout(true);
+
+        listaDeMensajes.setLayoutManager(linearLayoutManager);
         adaptador = new Adaptador(getContext(),mensajes);
         listaDeMensajes.setAdapter(adaptador);
 
@@ -106,14 +133,14 @@ public class InicioFragment extends Fragment {
                 Toast.makeText(getContext(),mensajes.get(listaDeMensajes.getChildAdapterPosition(view)).getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
-    }
 
-    private void agregarDatosALista(ArrayList<DataMensaje> listaMensajes) {
-        mensajes = listaMensajes;
     }
 
     private void inflarComponentes(View root) {
+        servicio = WSClient.getInstance().getWebService();
         listaDeMensajes = root.findViewById(R.id.recyclerView);
+        btnEnviarMensaje = root.findViewById(R.id.btnEnviarMensaje);
+        editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
         mensajes = new ArrayList<>();
         preferencias = getActivity().getSharedPreferences(Login.PREF_KEY, Principal.MODE_PRIVATE);
         user_id = preferencias.getString(Constantes.USER_ID,Constantes.ERROR_USER_ID);
@@ -121,7 +148,4 @@ public class InicioFragment extends Fragment {
         token = "Bearer "+preferencias.getString(Constantes.TOKEN,Constantes.ERROR_TOKEN);
     }
 
-    private void obtenerServicio() {
-        servicio = WSClient.getInstance().getWebService();
-    }
 }

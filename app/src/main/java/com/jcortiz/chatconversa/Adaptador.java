@@ -45,9 +45,16 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
         String hora = modelo.get(position).getDate();
         String nombre = modelo.get(position).getUser().getUsername();
         String foto = modelo.get(position).getUser().getUserImage();
+        String imagenDeChat = modelo.get(position).getImage();
         holder.nombreMensaje.setText(nombre);
         holder.horaMensaje.setText(hora);
         holder.cuerpoMensaje.setText(cuerpo);
+
+        if(!imagenDeChat.isEmpty() && imagenDeChat != null) {
+            holder.cuerpoMensaje.setVisibility(View.GONE);
+            holder.imagenDeChat.setVisibility(View.VISIBLE);
+            Picasso.get().load(imagenDeChat).into(holder.imagenDeChat);
+        }
 
         if(!foto.isEmpty() && foto!=null){
             Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
@@ -76,6 +83,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
         TextView cuerpoMensaje;
         TextView horaMensaje;
         ImageView fotoMensaje;
+        ImageView imagenDeChat;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -83,6 +91,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder> implem
             cuerpoMensaje = itemView.findViewById(R.id.textMensaje);
             horaMensaje = itemView.findViewById(R.id.textHoraDelMensaje);
             fotoMensaje = itemView.findViewById(R.id.imgPerfilChat);
+            imagenDeChat = itemView.findViewById(R.id.imagenDeChat);
         }
     }
 }
