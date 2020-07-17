@@ -1,15 +1,20 @@
 package com.jcortiz.chatconversa;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -25,10 +30,13 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
 
     private ArrayList<DataMensaje> modelo;
     private LayoutInflater inflater;
+    private String user_id;
+    private String idItemUser;
 
-    public Adaptador(Context context, ArrayList<DataMensaje> modelo) {
+    public Adaptador(Context context, ArrayList<DataMensaje> modelo, String user_id) {
         this.inflater = LayoutInflater.from(context);
         this.modelo = modelo;
+        this.user_id = user_id;
     }
 
     @NonNull
@@ -43,11 +51,19 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         String cuerpo = modelo.get(position).getMessage();
         String hora = modelo.get(position).getDate();
         String nombre = modelo.get(position).getUser().getUsername();
-        String foto = modelo.get(position).getUser().getUserImage();
+        String foto = modelo.get(position).getUser().getUserThumbnail();
         String imagenDeChat = modelo.get(position).getImage();
-        holder.nombreMensaje.setText(nombre);
-        holder.horaMensaje.setText(hora);
-        holder.cuerpoMensaje.setText(cuerpo);
+
+        if(Integer.parseInt(user_id) == modelo.get(position).getUser().getUserId()){
+            holder.contenedorMensaje.setBackgroundColor(Color.CYAN);
+            holder.nombreMensaje.setText("Yo");
+            holder.horaMensaje.setText(hora);
+            holder.cuerpoMensaje.setText(cuerpo);
+        } else {
+            holder.nombreMensaje.setText(nombre);
+            holder.horaMensaje.setText(hora);
+            holder.cuerpoMensaje.setText(cuerpo);
+        }
 
         if(!imagenDeChat.isEmpty() && imagenDeChat != null) {
             holder.cuerpoMensaje.setVisibility(View.GONE);
@@ -56,12 +72,21 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         }
 
         if(!foto.isEmpty() && foto!=null){
+            holder.setOnClickListener(modelo, position);
             Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
         }
 
-        holder.setOnClickListener();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return position;
+    }
 
     @Override
     public int getItemCount() {
@@ -74,7 +99,10 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         TextView horaMensaje;
         ImageView fotoMensaje;
         ImageView imagenDeChat;
+        RelativeLayout contenedorMensaje;
         Context context;
+        ArrayList<DataMensaje> dataMensajes;
+        int position;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,23 +112,47 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
             horaMensaje = itemView.findViewById(R.id.textHoraDelMensaje);
             fotoMensaje = itemView.findViewById(R.id.imgPerfilChat);
             imagenDeChat = itemView.findViewById(R.id.imagenDeChat);
+            contenedorMensaje = itemView.findViewById(R.id.contenedorMensaje);
         }
 
-        void setOnClickListener() {
+        void setOnClickListener(ArrayList<DataMensaje> dataMensajes, int position) {
+            this.dataMensajes = dataMensajes;
+            this.position = position;
             fotoMensaje.setOnClickListener(this);
-            cuerpoMensaje.setOnClickListener(this);
+            imagenDeChat.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
+
             switch(view.getId()) {
                 case R.id.imgPerfilChat:
-                    Toast.makeText(context,"Se realizó click en una imagen",Toast.LENGTH_SHORT).show();
+                    ampliarImagen(dataMensajes.get(position).getUser().getUserImage());
                     break;
-                case R.id.textMensaje:
-                    Toast.makeText(context,"Se a hecho click en el cuerpo del mensaje",Toast.LENGTH_SHORT).show();
+                case R.id.imagenDeChat:
+                    ampliarImagen(dataMensajes.get(position).getImage());
                     break;
             }
+        }
+
+        private void ampliarImagen(String image) {
+            ImageView fotoFlotante;
+            AlertDialog alertDialog;
+            AlertDialog.Builder builder;
+            View imagenFlotanteView;
+
+            builder = new AlertDialog.Builder(context);
+            builder.setCancelable(true);
+
+            imagenFlotanteView = LayoutInflater.from(context).inflate(R.layout.mostrar_imagen_flotante, null);
+            fotoFlotante = imagenFlotanteView.findViewById(R.id.fotoAmpliada);
+
+            if(!image.isEmpty() && image != null){
+                Picasso.get().load(image).into(fotoFlotante);
+            }
+            builder.setView(imagenFlotanteView);
+            alertDialog = builder.create();
+            alertDialog.show();
         }
     }
 }

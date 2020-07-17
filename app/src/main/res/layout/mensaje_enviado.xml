@@ -2,35 +2,28 @@
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-
-    >
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp">
-        <ImageView
-            android:id="@+id/imgPerfilChat"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@mipmap/ic_chat_conversa"></ImageView>
 
         <RelativeLayout
             android:id="@+id/contenedorMensaje"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@color/colorAccent"
-            android:layout_toRightOf="@id/imgPerfilChat"
+            android:background="@color/yellow"
             android:layout_centerVertical="true"
             android:padding="10dp"
-            android:layout_marginLeft="10dp">
+            android:layout_marginRight="10dp">
             <TextView
                 android:id="@+id/textNombreUsuario"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Juan Carlos"
+                android:text="Yo"
                 android:textStyle="bold"
                 ></TextView>
             <LinearLayout
@@ -65,7 +58,12 @@
                 android:text="17:24 PM"></TextView>
         </RelativeLayout>
 
-
+        <ImageView
+            android:id="@+id/imgPerfilChat"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@+id/contenedorMensaje"
+            android:src="@mipmap/ic_chat_conversa"></ImageView>
     </RelativeLayout>
 
 

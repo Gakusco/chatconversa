@@ -125,11 +125,8 @@ public class InicioFragment extends Fragment {
         linearLayoutManager.setReverseLayout(true);
 
         listaDeMensajes.setLayoutManager(linearLayoutManager);
-        adaptador = new Adaptador(getContext(),mensajes);
+        adaptador = new Adaptador(getContext(),mensajes, user_id);
         listaDeMensajes.setAdapter(adaptador);
-
-        
-
     }
 
     private void inflarComponentes(View root) {
