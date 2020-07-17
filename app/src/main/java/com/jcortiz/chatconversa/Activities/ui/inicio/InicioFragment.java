@@ -94,6 +94,7 @@ public class InicioFragment extends Fragment {
                 File archivoImg = new File("");
                 RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
                 MultipartBody.Part archivo = MultipartBody.Part.createFormData("user_image",archivoImg.getName(),img);
+
                 final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,null,id,user,message,null,null);
                 resp.enqueue(new Callback<EnviarMensajeWS>() {
                     @Override
@@ -127,12 +128,7 @@ public class InicioFragment extends Fragment {
         adaptador = new Adaptador(getContext(),mensajes);
         listaDeMensajes.setAdapter(adaptador);
 
-        adaptador.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick (View view) {
-                Toast.makeText(getContext(),mensajes.get(listaDeMensajes.getChildAdapterPosition(view)).getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+        
 
     }
 
