@@ -1,13 +1,19 @@
 package com.jcortiz.chatconversa.Activities.ui.inicio;
 
+import android.app.AlertDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.inputmethod.EditorInfo;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -28,7 +34,6 @@ import com.jcortiz.chatconversa.Retrofit.WebService;
 import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
-import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -49,7 +54,8 @@ public class InicioFragment extends Fragment {
     private String username;
     private String token;
 
-    private Button btnEnviarMensaje;
+    private ImageButton btnAdjuntar;
+    private ImageButton btnEnviarMensaje;
     private TextInputEditText editTextContenidoMensaje;
 
     private ArrayList<DataMensaje> mensajes;
@@ -70,7 +76,32 @@ public class InicioFragment extends Fragment {
 
         actualizarLista();
         enviarMensaje();
+        adjuntar();
         return root;
+    }
+
+    private void adjuntar() {
+        btnAdjuntar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                desplegarOpcionesAdjuntar();
+            }
+        });
+    }
+
+    private void desplegarOpcionesAdjuntar() {
+        AlertDialog alertDialog;
+        AlertDialog.Builder builder;
+        View opcionesAdjuntar;
+
+        builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(true);
+
+        opcionesAdjuntar = LayoutInflater.from(getContext()).inflate(R.layout.flotante_adjuntar,null);
+
+        builder.setView(opcionesAdjuntar);
+        alertDialog = builder.create();
+        alertDialog.show();
     }
 
     private void actualizarLista() {
@@ -82,39 +113,85 @@ public class InicioFragment extends Fragment {
     }
 
     private void enviarMensaje() {
+        editTextContenidoMensaje.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        editTextContenidoMensaje.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                boolean flag = false;
+                if (i == EditorInfo.IME_ACTION_SEND) {
+                    peticionDeEnvioDeMensaje();
+
+                    flag = true;
+                }
+                return flag;
+            }
+
+        });
+
+        comprobarInputEditText();
+
         btnEnviarMensaje.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick (View view) {
-                RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
-                RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
-                RequestBody message = RequestBody.create(MediaType.parse("text/plain"),editTextContenidoMensaje.getText().toString());
-                RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
-                RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
+                peticionDeEnvioDeMensaje();
+            }
+        });
+    }
 
-                File archivoImg = new File("");
-                RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
-                MultipartBody.Part archivo = MultipartBody.Part.createFormData("user_image",archivoImg.getName(),img);
+    private void comprobarInputEditText() {
+        editTextContenidoMensaje.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-                final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,null,id,user,message,null,null);
-                resp.enqueue(new Callback<EnviarMensajeWS>() {
-                    @Override
-                    public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
-                        if (response.isSuccessful()) {
-                            Log.d("Retrofit","Mensaje enviado con exito: "+response.body().toString());
-                            editTextContenidoMensaje.setText("");
-                            actualizarLista();
-                        } else if (!response.isSuccessful()) {
-                            Gson gson = new Gson();
-                            BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                            Log.d("Retrofit",mensajeDeError.getErrors().toString());
-                        }
-                    }
+            }
 
-                    @Override
-                    public void onFailure(Call<EnviarMensajeWS> call, Throwable t) {
-                        Log.d("Retrofit","Error al enviar mensaje: "+t.getMessage());
-                    }
-                });
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(editable.length()>0){
+                    btnAdjuntar.setVisibility(View.GONE);
+                    btnEnviarMensaje.setVisibility(View.VISIBLE);
+                } else {
+                    btnAdjuntar.setVisibility(View.VISIBLE);
+                    btnEnviarMensaje.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    private void peticionDeEnvioDeMensaje() {
+        RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
+        RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
+        RequestBody message = RequestBody.create(MediaType.parse("text/plain"),editTextContenidoMensaje.getText().toString());
+        RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
+        RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
+
+        File archivoImg = new File("");
+        RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
+        MultipartBody.Part archivo = MultipartBody.Part.createFormData("user_image",archivoImg.getName(),img);
+
+        final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,null,id,user,message,null,null);
+        resp.enqueue(new Callback<EnviarMensajeWS>() {
+            @Override
+            public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
+                if (response.isSuccessful()) {
+                    Log.d("Retrofit","Mensaje enviado con exito: "+response.body().toString());
+                    editTextContenidoMensaje.setText("");
+                    actualizarLista();
+                } else if (!response.isSuccessful()) {
+                    Gson gson = new Gson();
+                    BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
+                    Log.d("Retrofit",mensajeDeError.getErrors().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EnviarMensajeWS> call, Throwable t) {
+                Log.d("Retrofit","Error al enviar mensaje: "+t.getMessage());
             }
         });
     }
@@ -132,6 +209,7 @@ public class InicioFragment extends Fragment {
     private void inflarComponentes(View root) {
         servicio = WSClient.getInstance().getWebService();
         listaDeMensajes = root.findViewById(R.id.recyclerView);
+        btnAdjuntar = root.findViewById(R.id.btnAdjuntar);
         btnEnviarMensaje = root.findViewById(R.id.btnEnviarMensaje);
         editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
         mensajes = new ArrayList<>();

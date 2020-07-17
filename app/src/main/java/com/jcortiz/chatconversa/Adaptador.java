@@ -2,24 +2,18 @@ package com.jcortiz.chatconversa;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.media.Image;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
-import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -52,17 +46,15 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         String hora = modelo.get(position).getDate();
         String nombre = modelo.get(position).getUser().getUsername();
         String foto = modelo.get(position).getUser().getUserThumbnail();
-        String imagenDeChat = modelo.get(position).getImage();
+        String imagenDeChat = modelo.get(position).getThumnail();
 
+        holder.horaMensaje.setText(hora);
+        holder.cuerpoMensaje.setText(cuerpo);
         if(Integer.parseInt(user_id) == modelo.get(position).getUser().getUserId()){
             holder.contenedorMensaje.setBackgroundColor(Color.CYAN);
             holder.nombreMensaje.setText("Yo");
-            holder.horaMensaje.setText(hora);
-            holder.cuerpoMensaje.setText(cuerpo);
         } else {
             holder.nombreMensaje.setText(nombre);
-            holder.horaMensaje.setText(hora);
-            holder.cuerpoMensaje.setText(cuerpo);
         }
 
         if(!imagenDeChat.isEmpty() && imagenDeChat != null) {
@@ -72,9 +64,10 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         }
 
         if(!foto.isEmpty() && foto!=null){
-            holder.setOnClickListener(modelo, position);
             Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
         }
+
+        holder.setOnClickListener(modelo, position);
 
     }
 
@@ -136,23 +129,24 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         }
 
         private void ampliarImagen(String image) {
-            ImageView fotoFlotante;
-            AlertDialog alertDialog;
-            AlertDialog.Builder builder;
-            View imagenFlotanteView;
+            if(!image.isEmpty() && image != null) {
+                ImageView fotoFlotante;
+                AlertDialog alertDialog;
+                AlertDialog.Builder builder;
+                View imagenFlotanteView;
 
-            builder = new AlertDialog.Builder(context);
-            builder.setCancelable(true);
+                builder = new AlertDialog.Builder(context);
+                builder.setCancelable(true);
 
-            imagenFlotanteView = LayoutInflater.from(context).inflate(R.layout.mostrar_imagen_flotante, null);
-            fotoFlotante = imagenFlotanteView.findViewById(R.id.fotoAmpliada);
+                imagenFlotanteView = LayoutInflater.from(context).inflate(R.layout.flotante_mostrar_imagen, null);
+                fotoFlotante = imagenFlotanteView.findViewById(R.id.fotoAmpliada);
 
-            if(!image.isEmpty() && image != null){
                 Picasso.get().load(image).into(fotoFlotante);
+
+                builder.setView(imagenFlotanteView);
+                alertDialog = builder.create();
+                alertDialog.show();
             }
-            builder.setView(imagenFlotanteView);
-            alertDialog = builder.create();
-            alertDialog.show();
         }
     }
 }
