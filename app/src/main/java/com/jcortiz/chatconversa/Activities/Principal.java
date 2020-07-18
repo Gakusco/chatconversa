@@ -106,7 +106,7 @@ public class Principal extends AppCompatActivity {
         textoNombreHeader.setText(name+" "+lastName);
         textoCorreoHeader.setText(email);
         Log.d("Retrofit","La imagen es: "+imagenUser);
-        if(imagenUser != Constantes.ERROR_IMAGE) {
+        if(imagenUser != Constantes.ERROR_IMAGE && imagenUser != null && !imagenUser.isEmpty()) {
             Picasso.get().load(imagenUser).transform(new CropCircleTransformation()).into(imagenHeader);
         }
     }

@@ -110,7 +110,7 @@ public class TomarFotoFragment extends Fragment {
     }
 
     private void mostrarFotoActual() {
-        if(imagenUser != Constantes.ERROR_IMAGE) {
+        if(imagenUser != Constantes.ERROR_IMAGE && imagenUser !=null && !imagenUser.isEmpty()) {
             Picasso.get().load(imagenUser).into(fotoImageView);
         }
     }

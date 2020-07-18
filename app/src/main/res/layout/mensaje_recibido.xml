@@ -39,6 +39,12 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_below="@id/textNombreUsuario">
+                <ImageView
+                    android:id="@+id/imagenDeChat"
+                    android:layout_width="150dp"
+                    android:layout_height="150dp"
+                    android:visibility="gone"
+                    android:layout_below="@id/textNombreUsuario"></ImageView>
                 <TextView
                     android:id="@+id/textMensaje"
                     android:layout_width="match_parent"
@@ -46,12 +52,6 @@
                     android:maxWidth="300dp"
                     android:minWidth="300dp"
                     android:text="Hola, bienvenidooooooooooooooooooooooooooooooooooooooooooooo, esto es un experimento que esto realizando"></TextView>
-                <ImageView
-                    android:id="@+id/imagenDeChat"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:visibility="gone"
-                    android:layout_below="@id/textNombreUsuario"></ImageView>
             </LinearLayout>
 
 

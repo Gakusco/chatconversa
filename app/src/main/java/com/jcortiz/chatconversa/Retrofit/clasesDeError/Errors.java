@@ -34,8 +34,17 @@ public class Errors {
     @SerializedName("user_image")
     @Expose
     private List<String> userImage;
+    @SerializedName("longitude")
+    @Expose
+    private List<String> longitude;
+    @SerializedName("latitude")
+    @Expose
+    private List<String> latitude;
+    @SerializedName("image")
+    @Expose
+    private List<String> imagen;
 
-    public Errors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise, List<String> userId, List<String> userImage) {
+    public Errors(List<String> name, List<String> lastname, List<String> run, List<String> username, List<String> email, List<String> password, List<String> tokenEnterprise, List<String> userId, List<String> userImage, List<String> longitude, List<String> latitude, List<String> imagen) {
         this.name = name;
         this.lastname = lastname;
         this.run = run;
@@ -45,6 +54,9 @@ public class Errors {
         this.tokenEnterprise = tokenEnterprise;
         this.userId = userId;
         this.userImage = userImage;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.imagen = imagen;
     }
 
     public List<String> getName() {
@@ -119,25 +131,28 @@ public class Errors {
         this.userImage = userImage;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Errors errors = (Errors) o;
-        return Objects.equals(name, errors.name) &&
-                Objects.equals(lastname, errors.lastname) &&
-                Objects.equals(run, errors.run) &&
-                Objects.equals(username, errors.username) &&
-                Objects.equals(email, errors.email) &&
-                Objects.equals(password, errors.password) &&
-                Objects.equals(tokenEnterprise, errors.tokenEnterprise) &&
-                Objects.equals(userId, errors.userId) &&
-                Objects.equals(userImage, errors.userImage);
+    public List<String> getLongitude() {
+        return longitude;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, lastname, run, username, email, password, tokenEnterprise, userId, userImage);
+    public void setLongitude(List<String> longitude) {
+        this.longitude = longitude;
+    }
+
+    public List<String> getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(List<String> latitude) {
+        this.latitude = latitude;
+    }
+
+    public List<String> getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(List<String> imagen) {
+        this.imagen = imagen;
     }
 
     @Override
@@ -152,6 +167,9 @@ public class Errors {
                 ", tokenEnterprise=" + tokenEnterprise +
                 ", userId=" + userId +
                 ", userImage=" + userImage +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", imagen=" + imagen +
                 '}';
     }
 }

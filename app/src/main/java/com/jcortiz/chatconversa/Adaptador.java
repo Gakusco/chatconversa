@@ -58,7 +58,6 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         }
 
         if(!imagenDeChat.isEmpty() && imagenDeChat != null) {
-            holder.cuerpoMensaje.setVisibility(View.GONE);
             holder.imagenDeChat.setVisibility(View.VISIBLE);
             Picasso.get().load(imagenDeChat).into(holder.imagenDeChat);
         }

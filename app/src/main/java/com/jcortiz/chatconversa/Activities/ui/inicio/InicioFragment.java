@@ -1,8 +1,17 @@
 package com.jcortiz.chatconversa.Activities.ui.inicio;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -12,11 +21,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -53,9 +67,15 @@ public class InicioFragment extends Fragment {
     private String user_id;
     private String username;
     private String token;
+    private String path;
+    private final int CODE_PHOTO = 20;
 
     private ImageButton btnAdjuntar;
     private ImageButton btnEnviarMensaje;
+
+    private ImageButton btnObtenerImagenGaleria;
+    private ImageButton btnObtenerUbicacion;
+
     private TextInputEditText editTextContenidoMensaje;
 
     private ArrayList<DataMensaje> mensajes;
@@ -65,6 +85,13 @@ public class InicioFragment extends Fragment {
     private WebService servicio;
 
     private InicioViewModel inicioViewModel;
+
+    private AlertDialog alertDialog;
+    private AlertDialog.Builder builder;
+
+    private static final int REQUEST_PERMISSION = 10;
+    private static final String[] PERMISSION_REQUIRED =
+            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -80,6 +107,26 @@ public class InicioFragment extends Fragment {
         return root;
     }
 
+    private boolean permisoGaleria() {
+        // Permisos para acceder a la galeria
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_PERMISSION) {
+            if(permisoGaleria()) {
+                desplegarOpcionesAdjuntar();
+            } else {
+                Toast.makeText(getContext(),"Debe aceptar el permiso de galeria",Toast.LENGTH_SHORT).show();
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
     private void adjuntar() {
         btnAdjuntar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,18 +137,107 @@ public class InicioFragment extends Fragment {
     }
 
     private void desplegarOpcionesAdjuntar() {
-        AlertDialog alertDialog;
-        AlertDialog.Builder builder;
         View opcionesAdjuntar;
 
         builder = new AlertDialog.Builder(getContext());
         builder.setCancelable(true);
 
         opcionesAdjuntar = LayoutInflater.from(getContext()).inflate(R.layout.flotante_adjuntar,null);
+        btnObtenerImagenGaleria = opcionesAdjuntar.findViewById(R.id.btnGaleria);
 
         builder.setView(opcionesAdjuntar);
         alertDialog = builder.create();
         alertDialog.show();
+
+        obtenerImagenGaleria();
+    }
+
+    private void obtenerImagenGaleria() {
+        btnObtenerImagenGaleria.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(permisoGaleria()){
+                    Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    i.setType("image/");
+                    startActivityForResult(i.createChooser(i,"Seleccione una aplicacion"),CODE_PHOTO);
+                } else {
+                    ActivityCompat.requestPermissions(getActivity(),PERMISSION_REQUIRED, REQUEST_PERMISSION);
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode==getActivity().RESULT_OK) {
+            Uri imagenUri = data.getData();
+            path = obtenerPath(imagenUri);
+            Log.d("Path",path);
+            previsualizarImagen();
+        }
+    }
+
+    private void previsualizarImagen() {
+        obtenerImagenGaleria();
+        alertDialog.dismiss();
+        View imagenYTexto;
+        Button enviarImagen;
+        TextView verTexto;
+        ImageView verImagen;
+
+        builder = new AlertDialog.Builder(getContext());
+        builder.setCancelable(true);
+
+        imagenYTexto = LayoutInflater.from(getContext()).inflate(R.layout.flotante_previsualizar,null);
+        enviarImagen = imagenYTexto.findViewById(R.id.btnEnviarImagen);
+        verTexto = imagenYTexto.findViewById(R.id.textoPrevisualizar);
+        verImagen = imagenYTexto.findViewById(R.id.imagenPrevisualizar);
+        verTexto.setText(editTextContenidoMensaje.getText());
+        imagenConCalidad(verImagen);
+
+        builder.setView(imagenYTexto);
+        alertDialog = builder.create();
+        alertDialog.show();
+        enviarImagen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                peticionDeEnvioDeMensaje(path);
+                alertDialog.dismiss();
+            }
+        });
+    }
+
+    private void imagenConCalidad(ImageView imageView) {
+
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+
+        int scale = 1;
+
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scale;
+        bmOptions.inPurgeable = true;
+
+
+        Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+        imageView.setImageBitmap(bitmap);
+
+    }
+
+    private String obtenerPath(Uri data) {
+        String resultado = "";
+        Cursor cursor = getContext().getContentResolver().query(data, null,null, null,null);
+        if (cursor == null){
+            resultado = data.getPath();
+        }
+        if (cursor.moveToFirst()) {
+            int indice = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            resultado = cursor.getString(indice);
+            cursor.close();
+        }
+        return resultado;
     }
 
     private void actualizarLista() {
@@ -118,63 +254,37 @@ public class InicioFragment extends Fragment {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 boolean flag = false;
-                if (i == EditorInfo.IME_ACTION_SEND) {
-                    peticionDeEnvioDeMensaje();
+                if (i == EditorInfo.IME_ACTION_SEND && editTextContenidoMensaje.getText().length()>0) {
+                    peticionDeEnvioDeMensaje("");
 
                     flag = true;
+                } else {
+                    Toast.makeText(getContext(),"El mensaje está vacío",Toast.LENGTH_SHORT).show();
                 }
                 return flag;
             }
 
         });
-
-        comprobarInputEditText();
-
-        btnEnviarMensaje.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick (View view) {
-                peticionDeEnvioDeMensaje();
-            }
-        });
     }
 
-    private void comprobarInputEditText() {
-        editTextContenidoMensaje.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if(editable.length()>0){
-                    btnAdjuntar.setVisibility(View.GONE);
-                    btnEnviarMensaje.setVisibility(View.VISIBLE);
-                } else {
-                    btnAdjuntar.setVisibility(View.VISIBLE);
-                    btnEnviarMensaje.setVisibility(View.GONE);
-                }
-            }
-        });
-    }
-
-    private void peticionDeEnvioDeMensaje() {
+    private void peticionDeEnvioDeMensaje(String path) {
         RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
         RequestBody message = RequestBody.create(MediaType.parse("text/plain"),editTextContenidoMensaje.getText().toString());
         RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
         RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
 
-        File archivoImg = new File("");
+        File archivoImg = new File(path);
         RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
-        MultipartBody.Part archivo = MultipartBody.Part.createFormData("user_image",archivoImg.getName(),img);
+        MultipartBody.Part archivo;
+        if(path.isEmpty()) {
+            archivo = null;
+        } else {
+            archivo = MultipartBody.Part.createFormData("image",archivoImg.getName(),img);
+        }
 
-        final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,null,id,user,message,null,null);
+        final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,archivo,id,user,message,null,null);
         resp.enqueue(new Callback<EnviarMensajeWS>() {
             @Override
             public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
@@ -185,7 +295,10 @@ public class InicioFragment extends Fragment {
                 } else if (!response.isSuccessful()) {
                     Gson gson = new Gson();
                     BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
-                    Log.d("Retrofit",mensajeDeError.getErrors().toString());
+                    Log.d("Retrofit",mensajeDeError.getMessage());
+                    if(mensajeDeError.getErrors() != null) {
+                        Toast.makeText(getContext(),mensajeDeError.getErrors().getImagen().toString(),Toast.LENGTH_LONG).show();
+                    }
                 }
             }
 
