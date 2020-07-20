@@ -9,10 +9,15 @@
         android:id="@+id/imagenPrevisualizar"
         android:layout_width="300dp"
         android:layout_height="300dp"></ImageView>
-    <TextView
-        android:id="@+id/textoPrevisualizar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></TextView>
+    <EditText
+        android:id="@+id/editTextComentarioImagen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxHeight="150dp"
+        android:inputType="textMultiLine"
+        android:layout_margin="10dp"
+        android:hint="Comentario"
+        ></EditText>
     <Button
         android:id="@+id/btnEnviarImagen"
         android:layout_width="wrap_content"

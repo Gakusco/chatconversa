@@ -15,6 +15,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal">
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/outlinedTextField"
@@ -22,7 +23,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="6"
             android:hint="Mensaje"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            android:layout_margin="10dp"
+            android:layout_gravity="center_vertical">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/editTextContenidoMensaje"
@@ -38,17 +40,10 @@
             android:id="@+id/btnAdjuntar"
             android:layout_width="100dp"
             android:layout_height="40dp"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:layout_margin="10dp"
+            android:layout_gravity="bottom"
             android:src="@drawable/ic_baseline_attach_file_24_white"></ImageButton>
-        <ImageButton
-            android:id="@+id/btnEnviarMensaje"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:background="@color/colorPrimary"
-            android:layout_margin="10dp"
-            android:visibility="gone"
-            android:src="@drawable/ic_round_send_24_white"></ImageButton>
 
     </LinearLayout>
 </LinearLayout>

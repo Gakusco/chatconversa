@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -68,6 +69,7 @@ public class InicioFragment extends Fragment {
     private String username;
     private String token;
     private String path;
+    private String contenidoMensaje;
     private final int CODE_PHOTO = 20;
 
     private ImageButton btnAdjuntar;
@@ -88,6 +90,8 @@ public class InicioFragment extends Fragment {
 
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
+
+    private RequestBody message;
 
     private static final int REQUEST_PERMISSION = 10;
     private static final String[] PERMISSION_REQUIRED =
@@ -184,7 +188,7 @@ public class InicioFragment extends Fragment {
         alertDialog.dismiss();
         View imagenYTexto;
         Button enviarImagen;
-        TextView verTexto;
+        EditText comentarioDeLaImagen;
         ImageView verImagen;
 
         builder = new AlertDialog.Builder(getContext());
@@ -192,9 +196,8 @@ public class InicioFragment extends Fragment {
 
         imagenYTexto = LayoutInflater.from(getContext()).inflate(R.layout.flotante_previsualizar,null);
         enviarImagen = imagenYTexto.findViewById(R.id.btnEnviarImagen);
-        verTexto = imagenYTexto.findViewById(R.id.textoPrevisualizar);
+        comentarioDeLaImagen = imagenYTexto.findViewById(R.id.editTextComentarioImagen);
         verImagen = imagenYTexto.findViewById(R.id.imagenPrevisualizar);
-        verTexto.setText(editTextContenidoMensaje.getText());
         imagenConCalidad(verImagen);
 
         builder.setView(imagenYTexto);
@@ -203,6 +206,7 @@ public class InicioFragment extends Fragment {
         enviarImagen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                contenidoMensaje = comentarioDeLaImagen.getText().toString();
                 peticionDeEnvioDeMensaje(path);
                 alertDialog.dismiss();
             }
@@ -231,8 +235,7 @@ public class InicioFragment extends Fragment {
         Cursor cursor = getContext().getContentResolver().query(data, null,null, null,null);
         if (cursor == null){
             resultado = data.getPath();
-        }
-        if (cursor.moveToFirst()) {
+        } else if (cursor.moveToFirst()) {
             int indice = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             resultado = cursor.getString(indice);
             cursor.close();
@@ -255,6 +258,7 @@ public class InicioFragment extends Fragment {
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 boolean flag = false;
                 if (i == EditorInfo.IME_ACTION_SEND && editTextContenidoMensaje.getText().length()>0) {
+                    contenidoMensaje = editTextContenidoMensaje.getText().toString();
                     peticionDeEnvioDeMensaje("");
 
                     flag = true;
@@ -271,7 +275,7 @@ public class InicioFragment extends Fragment {
     private void peticionDeEnvioDeMensaje(String path) {
         RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
-        RequestBody message = RequestBody.create(MediaType.parse("text/plain"),editTextContenidoMensaje.getText().toString());
+        RequestBody message = RequestBody.create(MediaType.parse("text/plain"),contenidoMensaje);
         RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
         RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
 
@@ -323,7 +327,6 @@ public class InicioFragment extends Fragment {
         servicio = WSClient.getInstance().getWebService();
         listaDeMensajes = root.findViewById(R.id.recyclerView);
         btnAdjuntar = root.findViewById(R.id.btnAdjuntar);
-        btnEnviarMensaje = root.findViewById(R.id.btnEnviarMensaje);
         editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
         mensajes = new ArrayList<>();
         preferencias = getActivity().getSharedPreferences(Login.PREF_KEY, Principal.MODE_PRIVATE);
