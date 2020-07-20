@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.text.Editable;
@@ -25,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +34,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -51,7 +54,10 @@ import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
 
 import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -91,7 +97,7 @@ public class InicioFragment extends Fragment {
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
 
-    private RequestBody message;
+    private ProgressBar progressBar;
 
     private static final int REQUEST_PERMISSION = 10;
     private static final String[] PERMISSION_REQUIRED =
@@ -164,6 +170,7 @@ public class InicioFragment extends Fragment {
                     Intent i = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                     i.setType("image/");
                     startActivityForResult(i.createChooser(i,"Seleccione una aplicacion"),CODE_PHOTO);
+
                 } else {
                     ActivityCompat.requestPermissions(getActivity(),PERMISSION_REQUIRED, REQUEST_PERMISSION);
                 }
@@ -273,6 +280,7 @@ public class InicioFragment extends Fragment {
 
 
     private void peticionDeEnvioDeMensaje(String path) {
+        progressBar.setVisibility(View.VISIBLE);
         RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
         RequestBody message = RequestBody.create(MediaType.parse("text/plain"),contenidoMensaje);
@@ -321,10 +329,13 @@ public class InicioFragment extends Fragment {
         listaDeMensajes.setLayoutManager(linearLayoutManager);
         adaptador = new Adaptador(getContext(),mensajes, user_id);
         listaDeMensajes.setAdapter(adaptador);
+        progressBar.setVisibility(View.GONE);
+        listaDeMensajes.setVisibility(View.VISIBLE);
     }
 
     private void inflarComponentes(View root) {
         servicio = WSClient.getInstance().getWebService();
+        progressBar = root.findViewById(R.id.progressBar);
         listaDeMensajes = root.findViewById(R.id.recyclerView);
         btnAdjuntar = root.findViewById(R.id.btnAdjuntar);
         editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
