@@ -11,11 +11,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -76,11 +73,13 @@ public class InicioFragment extends Fragment {
     private String token;
     private String path;
     private String contenidoMensaje;
-    private final int CODE_PHOTO = 20;
+    private final int CODE_PHOTO = 30;
+    private final int CODE_CAMERA = 100;
 
     private ImageButton btnAdjuntar;
     private ImageButton btnEnviarMensaje;
 
+    private ImageButton btnObtenerFoto;
     private ImageButton btnObtenerImagenGaleria;
     private ImageButton btnObtenerUbicacion;
 
@@ -99,9 +98,12 @@ public class InicioFragment extends Fragment {
 
     private ProgressBar progressBar;
 
-    private static final int REQUEST_PERMISSION = 10;
+    private static final int GALLERY_PERMISSION = 10;
+    private static final int CAMERA_PERMISSION = 20;
     private static final String[] PERMISSION_REQUIRED =
-            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+            new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.CAMERA};
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -125,17 +127,14 @@ public class InicioFragment extends Fragment {
         return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_PERMISSION) {
-            if(permisoGaleria()) {
-                desplegarOpcionesAdjuntar();
-            } else {
-                Toast.makeText(getContext(),"Debe aceptar el permiso de galeria",Toast.LENGTH_SHORT).show();
-            }
+    private boolean permisoFoto(){
+        if(ContextCompat.checkSelfPermission(getContext(),Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(getContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            return false;
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        return true;
     }
+
 
     private void adjuntar() {
         btnAdjuntar.setOnClickListener(new View.OnClickListener() {
@@ -154,12 +153,56 @@ public class InicioFragment extends Fragment {
 
         opcionesAdjuntar = LayoutInflater.from(getContext()).inflate(R.layout.flotante_adjuntar,null);
         btnObtenerImagenGaleria = opcionesAdjuntar.findViewById(R.id.btnGaleria);
+        btnObtenerFoto = opcionesAdjuntar.findViewById(R.id.btnFoto);
 
         builder.setView(opcionesAdjuntar);
         alertDialog = builder.create();
         alertDialog.show();
 
+        obtenerFoto();
         obtenerImagenGaleria();
+    }
+
+    private void obtenerFoto() {
+        btnObtenerFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (permisoFoto()) {
+                    sacarUnaFoto();
+                } else {
+                    ActivityCompat.requestPermissions(getActivity(),PERMISSION_REQUIRED,CAMERA_PERMISSION);
+                }
+            }
+        });
+    }
+
+    private void sacarUnaFoto() {
+        Intent i =  new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (i.resolveActivity(getActivity().getPackageManager()) != null) {
+            File fileFoto = null;
+
+            try {
+                fileFoto = generarRuta();
+            } catch (IOException e ) {}
+
+            if ( fileFoto != null ) {
+                Uri fotoURI = FileProvider.getUriForFile(getContext(), "com.jcortiz.chatconversa.fileprovider",fileFoto);
+                i.putExtra(MediaStore.EXTRA_OUTPUT,fotoURI);
+                startActivityForResult(i, CODE_CAMERA);
+            }
+        }
+    }
+
+    private File generarRuta() throws IOException {
+        // Primero se crea un nombre de archivo
+        String fecha = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String nombreImagen = "respaldo_"+fecha + "_";
+        File directorio = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File imagen = File.createTempFile(nombreImagen,".jpg", directorio);
+
+        path = imagen.getAbsolutePath();
+        return imagen;
     }
 
     private void obtenerImagenGaleria() {
@@ -172,7 +215,7 @@ public class InicioFragment extends Fragment {
                     startActivityForResult(i.createChooser(i,"Seleccione una aplicacion"),CODE_PHOTO);
 
                 } else {
-                    ActivityCompat.requestPermissions(getActivity(),PERMISSION_REQUIRED, REQUEST_PERMISSION);
+                    ActivityCompat.requestPermissions(getActivity(),PERMISSION_REQUIRED, GALLERY_PERMISSION);
                 }
 
             }
@@ -183,10 +226,13 @@ public class InicioFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode==getActivity().RESULT_OK) {
-            Uri imagenUri = data.getData();
-            path = obtenerPath(imagenUri);
-            Log.d("Path",path);
-            previsualizarImagen();
+            if(requestCode == CODE_PHOTO) {
+                Uri imagenUri = data.getData();
+                path = obtenerPath(imagenUri);
+                previsualizarImagen();
+            } else if(requestCode == CODE_CAMERA) {
+                previsualizarImagen();
+            }
         }
     }
 

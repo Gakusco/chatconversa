@@ -8,38 +8,57 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-
-        android:layout_margin="20dp">
+        android:layout_margin="10dp"
+        android:orientation="vertical">
         <ImageButton
-            android:id="@+id/btnGaleria"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/ic_galeria"></ImageButton>
+            android:id="@+id/btnFoto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/ic_camera"></ImageButton>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:layout_gravity="center"
-            android:text="Galería"></TextView>
+            android:text="Cámara"></TextView>
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+
+        android:layout_margin="10dp">
         <ImageButton
-            android:id="@+id/btnUbicacion"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:background="@drawable/ic_brujula"></ImageButton>
+            android:id="@+id/btnGaleria"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:background="@drawable/ic_galeria"></ImageButton>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
+            android:textSize="14dp"
             android:layout_gravity="center"
-            android:text="Ubicación"></TextView>
+            android:text="Galería"></TextView>
     </LinearLayout>
+
+    <LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:orientation="vertical">
+    <ImageButton
+        android:id="@+id/btnUbicacion"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ic_brujula"></ImageButton>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:layout_gravity="center"
+        android:text="Ubicación"></TextView>
+</LinearLayout>
+
 
 </LinearLayout>

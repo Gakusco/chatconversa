@@ -125,17 +125,6 @@ public class TomarFotoFragment extends Fragment {
         return true;
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_PERMISSION) {
-            if (permisos()) {
-                obtenerFoto();
-            } else {
-                Toast.makeText(getContext(),"Los permisos deben ser autorizados",Toast.LENGTH_SHORT).show();
-            }
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
 
     private void obtenerFoto() {
         guardarFoto.setOnClickListener(new View.OnClickListener() {
