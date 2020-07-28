@@ -45,6 +45,12 @@
                     android:layout_height="150dp"
                     android:visibility="gone"
                     android:layout_below="@id/textNombreUsuario"></ImageView>
+                <Button
+                    android:id="@+id/btnUbicacion"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:text="Ubicación"></Button>
                 <TextView
                     android:id="@+id/textMensaje"
                     android:layout_width="match_parent"

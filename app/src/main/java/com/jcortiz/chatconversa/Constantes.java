@@ -23,4 +23,7 @@ public class Constantes {
     public static final String ERROR_EMAIL = "errorEmail";
     public static final String ERROR_IMAGE = "errorImage";
     public static final String ERROR_THUMBNAIL = "errorThumbnail";
+
+    public static final String ENVIAR_LATITUD = "enviarLatitud";
+    public static final String ENVIAR_LONGITUD = "enviarLongitud";
 }

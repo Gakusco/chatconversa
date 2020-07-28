@@ -2,10 +2,12 @@ package com.jcortiz.chatconversa;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.jcortiz.chatconversa.Activities.MapsActivity;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.squareup.picasso.Picasso;
 
@@ -47,6 +50,8 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         String nombre = modelo.get(position).getUser().getUsername();
         String foto = modelo.get(position).getUser().getUserThumbnail();
         String imagenDeChat = modelo.get(position).getThumnail();
+        String latitud = modelo.get(position).getLatitude();
+        String longitud = modelo.get(position).getLongitude();
 
         holder.horaMensaje.setText(hora);
         holder.cuerpoMensaje.setText(cuerpo);
@@ -64,6 +69,11 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
 
         if(!foto.isEmpty() && foto!=null){
             Picasso.get().load(foto).transform(new CropCircleTransformation()).into(holder.fotoMensaje);
+        }
+
+        if ( latitud != null && longitud !=null && !latitud.isEmpty() && !longitud.isEmpty() ) {
+            holder.cuerpoMensaje.setVisibility(View.GONE);
+            holder.btnUbicacion.setVisibility(View.VISIBLE);
         }
 
         holder.setOnClickListener(modelo, position);
@@ -90,6 +100,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
         TextView cuerpoMensaje;
         TextView horaMensaje;
         ImageView fotoMensaje;
+        Button btnUbicacion;
         ImageView imagenDeChat;
         RelativeLayout contenedorMensaje;
         Context context;
@@ -103,6 +114,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
             cuerpoMensaje = itemView.findViewById(R.id.textMensaje);
             horaMensaje = itemView.findViewById(R.id.textHoraDelMensaje);
             fotoMensaje = itemView.findViewById(R.id.imgPerfilChat);
+            btnUbicacion = itemView.findViewById(R.id.btnUbicacion);
             imagenDeChat = itemView.findViewById(R.id.imagenDeChat);
             contenedorMensaje = itemView.findViewById(R.id.contenedorMensaje);
         }
@@ -112,6 +124,7 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
             this.position = position;
             fotoMensaje.setOnClickListener(this);
             imagenDeChat.setOnClickListener(this);
+            btnUbicacion.setOnClickListener(this);
         }
 
         @Override
@@ -124,7 +137,17 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
                 case R.id.imagenDeChat:
                     ampliarImagen(dataMensajes.get(position).getImage());
                     break;
+                case R.id.btnUbicacion:
+                    mostrarUbicacion(dataMensajes.get(position).getLatitude(), dataMensajes.get(position).getLongitude());
+                    break;
             }
+        }
+
+        private void mostrarUbicacion(String latitude, String longitude) {
+            Intent i = new Intent(context, MapsActivity.class);
+            i.putExtra(Constantes.ENVIAR_LONGITUD, longitude);
+            i.putExtra(Constantes.ENVIAR_LATITUD, latitude);
+            context.startActivity(i);
         }
 
         private void ampliarImagen(String image) {
@@ -148,4 +171,5 @@ public class Adaptador extends RecyclerView.Adapter<Adaptador.ViewHolder>{
             }
         }
     }
+
 }

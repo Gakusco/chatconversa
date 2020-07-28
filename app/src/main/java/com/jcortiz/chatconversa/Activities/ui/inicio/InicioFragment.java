@@ -14,6 +14,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,6 +44,7 @@ import com.jcortiz.chatconversa.Activities.Login;
 import com.jcortiz.chatconversa.Activities.Principal;
 import com.jcortiz.chatconversa.Adaptador;
 import com.jcortiz.chatconversa.Constantes;
+import com.jcortiz.chatconversa.Activities.MapsActivity;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;
@@ -116,7 +118,18 @@ public class InicioFragment extends Fragment {
         actualizarLista();
         enviarMensaje();
         adjuntar();
+        comprobarEnvioUbicacion();
         return root;
+    }
+
+    private void comprobarEnvioUbicacion() {
+        Bundle ubicacion = getActivity().getIntent().getExtras();
+        if(ubicacion != null) {
+            String latitud = ubicacion.getString(Constantes.ENVIAR_LATITUD);
+            String longitud = ubicacion.getString(Constantes.ENVIAR_LONGITUD);
+            contenidoMensaje = "";
+            peticionDeEnvioDeMensaje("",longitud,latitud);
+        }
     }
 
     private boolean permisoGaleria() {
@@ -154,13 +167,26 @@ public class InicioFragment extends Fragment {
         opcionesAdjuntar = LayoutInflater.from(getContext()).inflate(R.layout.flotante_adjuntar,null);
         btnObtenerImagenGaleria = opcionesAdjuntar.findViewById(R.id.btnGaleria);
         btnObtenerFoto = opcionesAdjuntar.findViewById(R.id.btnFoto);
+        btnObtenerUbicacion = opcionesAdjuntar.findViewById(R.id.btnUbicacion);
 
         builder.setView(opcionesAdjuntar);
         alertDialog = builder.create();
+        alertDialog.getWindow().getAttributes().gravity = Gravity.BOTTOM;
         alertDialog.show();
 
         obtenerFoto();
         obtenerImagenGaleria();
+        obtenerUbicacion();
+    }
+
+    private void obtenerUbicacion() {
+        btnObtenerUbicacion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getContext(), MapsActivity.class);
+                startActivity(i);
+            }
+        });
     }
 
     private void obtenerFoto() {
@@ -260,7 +286,7 @@ public class InicioFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 contenidoMensaje = comentarioDeLaImagen.getText().toString();
-                peticionDeEnvioDeMensaje(path);
+                peticionDeEnvioDeMensaje(path,"","");
                 alertDialog.dismiss();
             }
         });
@@ -312,7 +338,7 @@ public class InicioFragment extends Fragment {
                 boolean flag = false;
                 if (i == EditorInfo.IME_ACTION_SEND && editTextContenidoMensaje.getText().length()>0) {
                     contenidoMensaje = editTextContenidoMensaje.getText().toString();
-                    peticionDeEnvioDeMensaje("");
+                    peticionDeEnvioDeMensaje("","","");
 
                     flag = true;
                 } else {
@@ -325,13 +351,22 @@ public class InicioFragment extends Fragment {
     }
 
 
-    private void peticionDeEnvioDeMensaje(String path) {
+    private void peticionDeEnvioDeMensaje(String path, String longi, String lati) {
         progressBar.setVisibility(View.VISIBLE);
         RequestBody id = RequestBody.create(MediaType.parse("text/plain"),user_id);
         RequestBody user = RequestBody.create(MediaType.parse("text/plain"),username);
         RequestBody message = RequestBody.create(MediaType.parse("text/plain"),contenidoMensaje);
-        RequestBody latitude = RequestBody.create(MediaType.parse("text/plain"),"");
-        RequestBody longitude = RequestBody.create(MediaType.parse("text/plain"),"");
+
+        RequestBody longitude;
+        RequestBody latitude;
+        if(longi.isEmpty()) {
+            longitude = null;
+            latitude = null;
+        } else {
+            latitude = RequestBody.create(MediaType.parse("text/plain"),lati);
+            longitude = RequestBody.create(MediaType.parse("text/plain"),longi);
+        }
+
 
         File archivoImg = new File(path);
         RequestBody img = RequestBody.create(MediaType.parse("multipart/form-data"),archivoImg);
@@ -342,12 +377,11 @@ public class InicioFragment extends Fragment {
             archivo = MultipartBody.Part.createFormData("image",archivoImg.getName(),img);
         }
 
-        final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,archivo,id,user,message,null,null);
+        final Call<EnviarMensajeWS> resp = servicio.enviarMensaje(token,archivo,id,user,message,latitude,longitude);
         resp.enqueue(new Callback<EnviarMensajeWS>() {
             @Override
             public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
                 if (response.isSuccessful()) {
-                    Log.d("Retrofit","Mensaje enviado con exito: "+response.body().toString());
                     editTextContenidoMensaje.setText("");
                     actualizarLista();
                 } else if (!response.isSuccessful()) {
