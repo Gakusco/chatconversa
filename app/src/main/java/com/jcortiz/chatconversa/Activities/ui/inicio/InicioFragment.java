@@ -12,7 +12,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -339,7 +341,6 @@ public class InicioFragment extends Fragment {
                 if (i == EditorInfo.IME_ACTION_SEND && editTextContenidoMensaje.getText().length()>0) {
                     contenidoMensaje = editTextContenidoMensaje.getText().toString();
                     peticionDeEnvioDeMensaje("","","");
-
                     flag = true;
                 } else {
                     Toast.makeText(getContext(),"El mensaje está vacío",Toast.LENGTH_SHORT).show();
@@ -347,6 +348,37 @@ public class InicioFragment extends Fragment {
                 return flag;
             }
 
+        });
+
+        editTextContenidoMensaje.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if (editable.length()>0 ) {
+                   btnEnviarMensaje.setVisibility(View.VISIBLE);
+                   btnAdjuntar.setVisibility(View.GONE);
+                } else {
+                    btnEnviarMensaje.setVisibility(View.GONE);
+                    btnAdjuntar.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+        btnEnviarMensaje.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                contenidoMensaje = editTextContenidoMensaje.getText().toString();
+                peticionDeEnvioDeMensaje("","","");
+            }
         });
     }
 
@@ -418,6 +450,7 @@ public class InicioFragment extends Fragment {
         progressBar = root.findViewById(R.id.progressBar);
         listaDeMensajes = root.findViewById(R.id.recyclerView);
         btnAdjuntar = root.findViewById(R.id.btnAdjuntar);
+        btnEnviarMensaje = root.findViewById(R.id.btnEnviar);
         editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
         mensajes = new ArrayList<>();
         preferencias = getActivity().getSharedPreferences(Login.PREF_KEY, Principal.MODE_PRIVATE);
