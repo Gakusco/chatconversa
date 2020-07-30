@@ -196,8 +196,8 @@ public class TomarFotoFragment extends Fragment {
     }
 
     private void respuestaDeError(BadRequest mensajeDeError) {
-        if(mensajeDeError.getMessage() != null){
-            Toast.makeText(getActivity(),mensajeDeError.getMessage(), Toast.LENGTH_SHORT).show();
+        if(mensajeDeError.getErrors().getImagen().toString() != null){
+            Toast.makeText(getActivity(),mensajeDeError.getErrors().getImagen().toString(), Toast.LENGTH_SHORT).show();
         }
         if(mensajeDeError.getErrors() != null){
             if(mensajeDeError.getErrors().getUsername() != null){
@@ -210,6 +210,8 @@ public class TomarFotoFragment extends Fragment {
                 Log.d("Retrofit", "Error imagen: "+mensajeDeError.getErrors().getUserImage());
             }
         }
+        progressBar.setVisibility(View.GONE);
+        tomarFotoBtn.setVisibility(View.VISIBLE);
     }
 
     private void sacarUnaFoto() {
