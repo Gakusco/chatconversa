@@ -15,7 +15,7 @@
             android:id="@+id/imgPerfilChat"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:src="@mipmap/ic_chat_conversa"></ImageView>
+            android:src="@drawable/ic_user_1633249"></ImageView>
 
         <RelativeLayout
             android:id="@+id/contenedorMensaje"
