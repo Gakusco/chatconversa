@@ -33,6 +33,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -53,6 +55,19 @@ import com.jcortiz.chatconversa.Retrofit.WebService;
 import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
+import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
+import com.pusher.client.Pusher;
+import com.pusher.client.PusherOptions;
+import com.pusher.client.channel.Channel;
+import com.pusher.client.channel.ChannelEventListener;
+import com.pusher.client.channel.PusherEvent;
+import com.pusher.client.channel.SubscriptionEventListener;
+import com.pusher.client.connection.ConnectionEventListener;
+import com.pusher.client.connection.ConnectionState;
+import com.pusher.client.connection.ConnectionStateChange;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -68,6 +83,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class InicioFragment extends Fragment {
+
+    private static final String CHANNEL_ID = "PUSSHER_MSG";
 
     private Adaptador adaptador;
     private RecyclerView listaDeMensajes;
@@ -89,7 +106,8 @@ public class InicioFragment extends Fragment {
 
     private TextInputEditText editTextContenidoMensaje;
 
-    private ArrayList<DataMensaje> mensajes;
+    private ArrayList<DataMensaje> mensajes = new ArrayList<>();
+    private DataMensaje mensaje;
 
     private SharedPreferences preferencias;
 
@@ -116,6 +134,12 @@ public class InicioFragment extends Fragment {
                 ViewModelProviders.of(this).get(InicioViewModel.class);
         View root = inflater.inflate(R.layout.fragment_inicio, container, false);
         inflarComponentes(root);
+
+        inicioViewModel.getDataMensaje().observe(getViewLifecycleOwner(), chatResponse -> {
+            mensaje = chatResponse;
+            mensajes.add(mensaje);
+            adaptador.notifyDataSetChanged();
+        });
 
         actualizarLista();
         enviarMensaje();
@@ -325,11 +349,28 @@ public class InicioFragment extends Fragment {
     }
 
     private void actualizarLista() {
-        inicioViewModel.getDataMensaje(token, user_id, username).observe(getViewLifecycleOwner(), chatResponse -> {
-            mensajes = chatResponse;
-            desplegarLista();
-        });
 
+        Call<MensajeWS> resp = servicio.obtenerMensajes(token, user_id, username);
+
+        resp.enqueue(new Callback<MensajeWS>() {
+            @Override
+            public void onResponse(Call<MensajeWS> call, Response<MensajeWS> response) {
+                if(response.isSuccessful()) {
+                    for (int i = 0; i< response.body().getData().size(); i++ ) {
+                        mensajes.add(response.body().getData().get(response.body().getData().size()-i-1));
+                    }
+                    desplegarLista();
+                    Log.d("Retrofit", response.body().toString());
+                } else {
+                    Log.d("Retrofit", response.errorBody().toString());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MensajeWS> call, Throwable t) {
+                Log.d("Retrofit", "Se ha producido un error: "+t.getMessage());
+            }
+        });
     }
 
     private void enviarMensaje() {
@@ -415,13 +456,14 @@ public class InicioFragment extends Fragment {
             public void onResponse(Call<EnviarMensajeWS> call, Response<EnviarMensajeWS> response) {
                 if (response.isSuccessful()) {
                     editTextContenidoMensaje.setText("");
-                    actualizarLista();
+                    progressBar.setVisibility(View.GONE);
                 } else if (!response.isSuccessful()) {
                     Gson gson = new Gson();
                     BadRequest mensajeDeError = gson.fromJson(response.errorBody().charStream(),BadRequest.class);
                     Log.d("Retrofit",mensajeDeError.getMessage());
                     if(mensajeDeError.getErrors() != null) {
                         Toast.makeText(getContext(),mensajeDeError.getErrors().getImagen().toString(),Toast.LENGTH_LONG).show();
+                        progressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -436,8 +478,7 @@ public class InicioFragment extends Fragment {
     private void desplegarLista() {
         // Invierte el orden de la lista
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        linearLayoutManager.setReverseLayout(true);
-
+        linearLayoutManager.setStackFromEnd(true);
         listaDeMensajes.setLayoutManager(linearLayoutManager);
         adaptador = new Adaptador(getContext(),mensajes, user_id);
         listaDeMensajes.setAdapter(adaptador);
@@ -452,7 +493,6 @@ public class InicioFragment extends Fragment {
         btnAdjuntar = root.findViewById(R.id.btnAdjuntar);
         btnEnviarMensaje = root.findViewById(R.id.btnEnviar);
         editTextContenidoMensaje = root.findViewById(R.id.editTextContenidoMensaje);
-        mensajes = new ArrayList<>();
         preferencias = getActivity().getSharedPreferences(Login.PREF_KEY, Principal.MODE_PRIVATE);
         user_id = preferencias.getString(Constantes.USER_ID,Constantes.ERROR_USER_ID);
         username = preferencias.getString(Constantes.USER,Constantes.ERROR_USER);
