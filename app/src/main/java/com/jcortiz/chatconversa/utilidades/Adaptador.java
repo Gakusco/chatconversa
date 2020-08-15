@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa;
+package com.jcortiz.chatconversa.utilidades;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -15,7 +15,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.jcortiz.chatconversa.Activities.MapsActivity;
+import com.jcortiz.chatconversa.UI.MapsActivity;
+import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.squareup.picasso.Picasso;
 

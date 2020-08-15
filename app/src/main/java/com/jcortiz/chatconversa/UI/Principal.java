@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities;
+package com.jcortiz.chatconversa.UI;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.Constantes;
+import com.jcortiz.chatconversa.utilidades.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;

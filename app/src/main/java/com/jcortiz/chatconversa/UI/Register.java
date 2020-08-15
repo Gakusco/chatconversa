@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities;
+package com.jcortiz.chatconversa.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 

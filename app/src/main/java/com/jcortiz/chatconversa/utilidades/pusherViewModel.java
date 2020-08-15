@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities.ui.inicio;
+package com.jcortiz.chatconversa.utilidades;
 
 import android.app.Application;
 import android.util.Log;
@@ -22,11 +22,11 @@ import com.pusher.client.connection.ConnectionEventListener;
 import com.pusher.client.connection.ConnectionState;
 import com.pusher.client.connection.ConnectionStateChange;
 
-public class InicioViewModel extends AndroidViewModel {
+public class pusherViewModel extends AndroidViewModel {
 
     private MutableLiveData<DataMensaje> mensaje = new MutableLiveData<DataMensaje>();
 
-    public InicioViewModel(@NonNull Application application) {
+    public pusherViewModel(@NonNull Application application) {
         super(application);
     }
 

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.WindowManager;
 
-import com.jcortiz.chatconversa.Activities.Login;
+import com.jcortiz.chatconversa.UI.Login;
 import com.jcortiz.chatconversa.R;
 
 public class splashLogout extends AppCompatActivity {

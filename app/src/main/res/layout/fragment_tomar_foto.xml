@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_margin="20px"
-    tools:context=".Activities.ui.tomarFoto.TomarFotoFragment">
+    tools:context=".UI.fragments.tomarFoto.TomarFotoFragment">
 
     <ImageView
         android:id="@+id/fotoImageView"

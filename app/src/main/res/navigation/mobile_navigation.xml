@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_inicio"
-        android:name="com.jcortiz.chatconversa.Activities.ui.inicio.InicioFragment"
+        android:name="com.jcortiz.chatconversa.UI.fragments.inicio.InicioFragment"
         android:label="@string/menu_home"
         tools:layout="@layout/fragment_inicio">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_home_second"
-        android:name="com.jcortiz.chatconversa.Activities.ui.inicio.HomeSecondFragment"
+        android:name="com.jcortiz.chatconversa.UI.fragments.inicio.HomeSecondFragment"
         android:label="@string/home_second"
         tools:layout="@layout/fragment_home_second">
         <action
@@ -31,13 +31,13 @@
 
     <fragment
         android:id="@+id/nav_tomar_foto"
-        android:name="com.jcortiz.chatconversa.Activities.ui.tomarFoto.TomarFotoFragment"
+        android:name="com.jcortiz.chatconversa.UI.fragments.tomarFoto.TomarFotoFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_tomar_foto" />
 
     <fragment
         android:id="@+id/nav_sobre_mi"
-        android:name="com.jcortiz.chatconversa.Activities.ui.AcercDeMi.AcercaDeMiFragment"
+        android:name="com.jcortiz.chatconversa.UI.fragments.AcercDeMi.AcercaDeMiFragment"
         android:label="@string/menu_slideshow"
         tools:layout="@layout/fragment_acerca_de_mi" />
 </navigation>

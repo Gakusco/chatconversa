@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities.ui.tomarFoto;
+package com.jcortiz.chatconversa.UI.fragments.tomarFoto;
 
 import android.Manifest;
 import android.content.Intent;
@@ -31,9 +31,9 @@ import androidx.lifecycle.ViewModelProviders;
 
 
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.Activities.Login;
-import com.jcortiz.chatconversa.Activities.Principal;
-import com.jcortiz.chatconversa.Constantes;
+import com.jcortiz.chatconversa.UI.Login;
+import com.jcortiz.chatconversa.UI.Principal;
+import com.jcortiz.chatconversa.utilidades.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;
@@ -54,8 +54,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TomarFotoFragment extends Fragment {
-
-    private TomarFotoViewModel galleryViewModel;
 
     private Button tomarFotoBtn;
     private Button guardarFoto;
@@ -82,16 +80,8 @@ public class TomarFotoFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                ViewModelProviders.of(this).get(TomarFotoViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_tomar_foto, container, false);
-        //final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                //textView.setText(s);
-            }
-        });
 
         inflarComponentes(root);
         obtenerPreferencias();

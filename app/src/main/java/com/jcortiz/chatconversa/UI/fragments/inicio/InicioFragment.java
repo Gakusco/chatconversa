@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities.ui.inicio;
+package com.jcortiz.chatconversa.UI.fragments.inicio;
 
 import android.Manifest;
 import android.app.AlertDialog;
@@ -33,8 +33,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -44,11 +42,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.Activities.Login;
-import com.jcortiz.chatconversa.Activities.Principal;
-import com.jcortiz.chatconversa.Adaptador;
-import com.jcortiz.chatconversa.Constantes;
-import com.jcortiz.chatconversa.Activities.MapsActivity;
+import com.jcortiz.chatconversa.UI.Login;
+import com.jcortiz.chatconversa.UI.Principal;
+import com.jcortiz.chatconversa.utilidades.Adaptador;
+import com.jcortiz.chatconversa.utilidades.Constantes;
+import com.jcortiz.chatconversa.UI.MapsActivity;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;
@@ -56,18 +54,7 @@ import com.jcortiz.chatconversa.Retrofit.clasesDeError.BadRequest;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.DataMensaje;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.EnviarMensajeWS;
 import com.jcortiz.chatconversa.Retrofit.respuestasWS.MensajeWS;
-import com.pusher.client.Pusher;
-import com.pusher.client.PusherOptions;
-import com.pusher.client.channel.Channel;
-import com.pusher.client.channel.ChannelEventListener;
-import com.pusher.client.channel.PusherEvent;
-import com.pusher.client.channel.SubscriptionEventListener;
-import com.pusher.client.connection.ConnectionEventListener;
-import com.pusher.client.connection.ConnectionState;
-import com.pusher.client.connection.ConnectionStateChange;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.jcortiz.chatconversa.utilidades.pusherViewModel;
 
 import java.io.File;
 import java.io.IOException;
@@ -113,7 +100,7 @@ public class InicioFragment extends Fragment {
 
     private WebService servicio;
 
-    private InicioViewModel inicioViewModel;
+    private pusherViewModel inicioViewModel;
 
     private AlertDialog alertDialog;
     private AlertDialog.Builder builder;
@@ -131,7 +118,7 @@ public class InicioFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
 
         inicioViewModel =
-                ViewModelProviders.of(this).get(InicioViewModel.class);
+                ViewModelProviders.of(this).get(pusherViewModel.class);
         View root = inflater.inflate(R.layout.fragment_inicio, container, false);
         inflarComponentes(root);
 

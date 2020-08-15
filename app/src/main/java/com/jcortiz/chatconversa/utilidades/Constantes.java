@@ -1,6 +1,4 @@
-package com.jcortiz.chatconversa;
-
-import com.jcortiz.chatconversa.Activities.Login;
+package com.jcortiz.chatconversa.utilidades;
 
 public class Constantes {
     public static final String USER = "user";

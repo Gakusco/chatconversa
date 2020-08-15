@@ -35,10 +35,10 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".Activities.MapsActivity"
+            android:name=".UI.MapsActivity"
             android:label="@string/title_activity_maps"></activity>
         <activity
-            android:name=".Activities.Principal"
+            android:name=".UI.Principal"
             android:label="@string/title_activity_principal"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -51,14 +51,14 @@
             android:name=".splashes.splashRegistroExitoso"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.Login"
+            android:name=".UI.Login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Activities.Register"
-            android:parentActivityName=".Activities.Login">
+            android:name=".UI.Register"
+            android:parentActivityName=".UI.Login">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.Login" />
+                android:value=".UI.Login" />
         </activity>
         <activity
             android:name=".splashes.splashAbrirApp"

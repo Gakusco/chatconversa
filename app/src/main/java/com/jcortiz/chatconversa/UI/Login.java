@@ -1,4 +1,4 @@
-package com.jcortiz.chatconversa.Activities;
+package com.jcortiz.chatconversa.UI;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.gson.Gson;
-import com.jcortiz.chatconversa.Constantes;
+import com.jcortiz.chatconversa.utilidades.Constantes;
 import com.jcortiz.chatconversa.R;
 import com.jcortiz.chatconversa.Retrofit.WSClient;
 import com.jcortiz.chatconversa.Retrofit.WebService;
