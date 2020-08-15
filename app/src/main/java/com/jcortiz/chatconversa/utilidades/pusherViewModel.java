@@ -1,6 +1,9 @@
 package com.jcortiz.chatconversa.utilidades;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -25,9 +28,11 @@ import com.pusher.client.connection.ConnectionStateChange;
 public class pusherViewModel extends AndroidViewModel {
 
     private MutableLiveData<DataMensaje> mensaje = new MutableLiveData<DataMensaje>();
+    private final String CANAL_ID = "ID";
 
     public pusherViewModel(@NonNull Application application) {
         super(application);
+        crearCanal();
     }
 
 
@@ -44,7 +49,7 @@ public class pusherViewModel extends AndroidViewModel {
         pusher.connect(new ConnectionEventListener() {
             @Override
             public void onConnectionStateChange(ConnectionStateChange change) {
-                Log.d("PUSHER","Estado actual"+ change.getCurrentState().name()+" Estado previo"+change.getPreviousState().name());
+                Log.d("PUSHER","Estado actual "+ change.getCurrentState().name()+" Estado previo "+change.getPreviousState().name());
             }
 
             @Override
@@ -82,5 +87,13 @@ public class pusherViewModel extends AndroidViewModel {
                 notificationManagerCompat.notify(4, builder.build());
             }
         });
+    }
+
+    public void crearCanal() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(CANAL_ID, "PUSHER", NotificationManager.IMPORTANCE_HIGH);
+            NotificationManager notificationManager = getApplication().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }

@@ -1,9 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:map="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/map"
-    android:name="com.google.android.gms.maps.SupportMapFragment"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.MapsActivity" />
+    android:layout_width="match_parent"
+    android:orientation="vertical">
+    <fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        tools:context=".UI.MapsActivity" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPosicionActual"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Enviar posición actual"></com.google.android.material.button.MaterialButton>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnPosicionMarcada"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Enviar posición marcada"></com.google.android.material.button.MaterialButton>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnRegresar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Regresar"></com.google.android.material.button.MaterialButton>
+</LinearLayout>

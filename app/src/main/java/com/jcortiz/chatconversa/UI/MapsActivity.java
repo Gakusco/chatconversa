@@ -10,6 +10,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.InputType;
+import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -23,15 +27,18 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jcortiz.chatconversa.utilidades.Constantes;
 import com.jcortiz.chatconversa.R;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMarkerClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener{
 
     private GoogleMap mMap;
+    private Button btnEnviarPosicionActual;
+    private Button btnEnviarPosicionMarcado;
+    private Button regresar;
 
+    private MarkerOptions marker;
 
     private static final int LOCATION_CODE = 40;
     private static final String[] PERMISSIONS = new String[]{Manifest.permission.ACCESS_FINE_LOCATION};
@@ -47,6 +54,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        inflarComponentes();
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -64,6 +72,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         };
 
 
+    }
+
+    private void inflarComponentes() {
+        btnEnviarPosicionActual = findViewById(R.id.btnPosicionActual);
+        btnEnviarPosicionMarcado = findViewById(R.id.btnPosicionMarcada);
+        regresar = findViewById(R.id.btnRegresar);
     }
 
     private void inicializarUbicacionPorRastreo() {
@@ -102,7 +116,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.getUiSettings().setCompassEnabled(true);
         mMap.getUiSettings().setZoomControlsEnabled(true);
         Bundle ubicacion = getIntent().getExtras();
+
+        // Si la ubucacion existen, entonces quiere decir que se a presionado una ubicacion
+        // desde la ventana de chat
         if ( ubicacion != null ){
+            btnEnviarPosicionActual.setVisibility(View.GONE);
+            btnEnviarPosicionMarcado.setVisibility(View.GONE);
             String latitud = ubicacion.getString(Constantes.ENVIAR_LATITUD);
             String longitud = ubicacion.getString(Constantes.ENVIAR_LONGITUD);
             LatLng latLng = new LatLng(Double.parseDouble(latitud), Double.parseDouble(longitud));
@@ -113,12 +132,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.moveCamera(pos);
         } else {
             mMap.setOnMapLongClickListener(this);
-            mMap.setOnMarkerClickListener(this);
             CameraUpdate zoom = CameraUpdateFactory.zoomTo(17);
             mMap.moveCamera(zoom);
             habilitarLocalizacion();
         }
+        presionarBtn();
+    }
 
+    private void presionarBtn() {
+        btnEnviarPosicionMarcado.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (marker != null ) {
+                    Intent i = new Intent(MapsActivity.this, Principal.class);
+                    i.putExtra(Constantes.ENVIAR_LATITUD, String.valueOf(marker.getPosition().latitude));
+                    i.putExtra(Constantes.ENVIAR_LONGITUD, String.valueOf(marker.getPosition().longitude));
+                    startActivity(i);
+                    finish();
+                } else {
+                    Toast.makeText(getApplicationContext(),"Debe marcar una posición", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        btnEnviarPosicionActual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MapsActivity.this, Principal.class);
+                i.putExtra(Constantes.ENVIAR_LATITUD, String.valueOf(mMap.getCameraPosition().target.latitude));
+                i.putExtra(Constantes.ENVIAR_LONGITUD, String.valueOf(mMap.getCameraPosition().target.longitude));
+                startActivity(i);
+                finish();
+            }
+        });
+        regresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(MapsActivity.this, Principal.class);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 
     private void habilitarLocalizacion() {
@@ -145,16 +199,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mMap.addMarker(new MarkerOptions().position(latLng).title("Marcador"));
+        marker = new MarkerOptions().position(latLng).title("Marcador");
+        mMap.clear();
+        mMap.addMarker(marker);
     }
 
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        Intent i = new Intent(MapsActivity.this, Principal.class);
-        i.putExtra(Constantes.ENVIAR_LATITUD, String.valueOf(marker.getPosition().latitude));
-        i.putExtra(Constantes.ENVIAR_LONGITUD, String.valueOf(marker.getPosition().longitude));
-        startActivity(i);
-        finish();
-        return false;
-    }
 }
